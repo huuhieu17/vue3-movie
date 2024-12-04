@@ -4,8 +4,9 @@
   </component>
 </template>
 <script lang="ts">
-import { RouterView, RouterLink } from 'vue-router'
+
 export default {
+  // eslint-disable-next-line vue/multi-word-component-names
   name: "Layout",
 }
 

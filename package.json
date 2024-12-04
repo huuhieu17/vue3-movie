@@ -22,7 +22,9 @@
     "@fortawesome/vue-fontawesome": "^3.0.8",
     "axios": "^1.7.8",
     "pinia": "^2.2.6",
+    "swiper": "^11.1.15",
     "vue": "^3.5.13",
+    "vue-meta": "^3.0.0-alpha.10",
     "vue-router": "^4.4.5"
   },
   "devDependencies": {
