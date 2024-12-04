@@ -1,10 +1,10 @@
 <template>
-  <div class="lazy-image-wrapper" ref="el">
+  <div class="lazy-image-wrapper h-full w-full" ref="el">
     <img
       v-if="isVisible"
       :src="src"
       :alt="alt"
-      :class="'lazy-image' + className"
+      :class="'lazy-image ' + className"
     />
   </div>
 </template>

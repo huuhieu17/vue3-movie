@@ -1,9 +1,40 @@
 @import './base.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+html {
+    scroll-behavior: smooth;
+}
 body {
     background-color: #121212;
     color: #fff;
+}
+
+/* Toàn bộ thanh cuộn */
+::-webkit-scrollbar {
+    width: 8px; /* Độ rộng thanh dọc */
+    height: 8px; /* Độ cao thanh ngang */
+}
+
+/* Track (nền của thanh cuộn) */
+::-webkit-scrollbar-track {
+    background: #f4f4f4;
+}
+
+/* Thumb (phần trượt) */
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Thumb khi hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+@media (max-width: 768px) {
+    ::-webkit-scrollbar {
+        display: none;
+    }
 }

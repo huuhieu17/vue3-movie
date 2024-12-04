@@ -3,7 +3,7 @@ import { onMounted, ref } from 'vue'
 import { NCarousel, NRate } from 'naive-ui'
 import httpClient from '@/utils/httpClient.ts'
 import { appConfig } from '@/utils/config.ts'
-
+import LazyImage from '@/components/Image/Image.vue'
 const listData = ref([])
 
 onMounted(async () => {
@@ -21,8 +21,8 @@ const getListData = async () => {
   <n-carousel show-arrow autoplay keyboard draggable>
     <div v-for="data in listData" :key="data._id" class="relative w-full lg:aspect-[16/7] aspect-[1] bg-cover">
       <div class="absolute inset-0 bg-gradient-to-b from-black/70 to-transparent"></div>
-      <img
-        class="w-full h-full object-cover"
+      <LazyImage
+        className="w-full h-full object-cover"
         :src="`${appConfig.imageUrl}/uploads/movies/${data.poster_url}`"
         :alt="data.name"
       />
