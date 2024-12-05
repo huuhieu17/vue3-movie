@@ -6,7 +6,6 @@ import type { ResponseMovie } from '@/interfaces/home.ts'
 import { VideoPlayer } from '@videojs-player/vue'
 import { NCollapse, NCollapseItem } from 'naive-ui'
 import NewFilm from '@/views/home/NewFilm.vue'
-import { useMeta } from 'vue-meta'
 
 const route = useRoute()
 const router = useRouter()
@@ -31,7 +30,8 @@ const playEspisode = (_episode: string) => {
       episode: _episode,
     },
   })
-  const episodeByQuery = listEpisodeData.value.find((item: any) => item.slug === _episode) || listEpisodeData.value[0];
+  const episodeByQuery =
+    listEpisodeData.value.find((item: any) => item.slug === _episode) || listEpisodeData.value[0]
 
   currentEpisode.value = episodeByQuery
   if (episodeByQuery) {
@@ -98,7 +98,7 @@ watch(playerOptions, () => {
     </div>
     <div class="lg:w-1/5 w-full lg:px-4 lg:mt-0 mt-5">
       <div class="text-2xl">
-        {{ movieData.item.name }}
+        {{ movieData.item.name }} - Tập {{currentEpisode.name}}
       </div>
       <n-collapse class="mt-4" default-expanded-names="1">
         <div v-if="currentEpisode && currentEpisode.servers">
@@ -117,7 +117,7 @@ watch(playerOptions, () => {
           <div class="w-full flex flex-wrap gap-4">
             <div
               @click="playEspisode(item.slug)"
-              class=" px-5 py-2 cursor-pointer text-sm"
+              class="px-5 py-2 cursor-pointer text-sm"
               :class="currentEpisode.slug == item.slug ? 'bg-gray-500' : 'bg-gray-900'"
               v-for="item in listEpisodeData"
               :key="item.name"
