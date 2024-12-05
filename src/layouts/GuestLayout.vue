@@ -1,4 +1,7 @@
 <template>
+  <metainfo>
+    <template v-slot:title="{ content }">{{ content }} - Yay!</template>
+  </metainfo>
   <header
     :class="[
       'fixed top-0 left-0 w-full z-50 transition duration-300',
@@ -44,9 +47,9 @@
     </div>
     <div class="flex items-center space-x-4">
       <font-awesome-icon class="text-gray-300" :icon="['fas', 'search']" />
-      <n-button class="block sm:hidden text-2xl" @click="activateDrawer()">
+      <button class="block sm:hidden text-2xl" @click="activateDrawer()">
         <font-awesome-icon class="text-gray-300" :icon="['fas', 'bars']" />
-      </n-button>
+      </button>
     </div>
   </header>
   <div>
@@ -88,6 +91,22 @@
     </n-drawer>
   </div>
   <slot></slot>
+  <footer>
+    <!-- This is an example component -->
+    <footer class="mx-auto mt-32 w-full max-w-container px-4 sm:px-6 lg:px-8" aria-labelledby="footer-heading">
+      <div class="items-centers grid grid-cols-1 justify-between gap-4 border-t border-gray-900 py-6 md:grid-cols-2">
+        <p class="text-sm/6 text-gray-600 max-md:text-center">
+          ©
+          <!-- -->2024
+          <!-- -->
+          Steve
+        </p>
+        <div class="flex items-center justify-center space-x-4 text-sm/6 text-gray-500 md:justify-end">
+          <p>Đây chỉ là dự án thử nghiệm</p>
+        </div>
+      </div>
+    </footer>
+  </footer>
 </template>
 
 <script lang="ts">
@@ -96,6 +115,8 @@ import { ref } from 'vue'
 import { NPopover, NDrawer, NDrawerContent } from 'naive-ui'
 import { onMounted, computed } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useMeta } from 'vue-meta'
+
 
 export default {
   name: 'GuestLayout',
@@ -109,6 +130,14 @@ export default {
     const categoriesStore = useCategoriesStore()
     const countriesStore = useCountriesStore()
     const activeDrawer = ref(false)
+
+    useMeta({
+      title: 'Steve Movie',
+      htmlAttrs: {
+        lang: 'vi',
+        amp: true
+      }
+    },)
     // Fetch countries when the component is mounted
     onMounted(() => {
       categoriesStore.fetchCategories()
