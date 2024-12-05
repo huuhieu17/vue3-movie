@@ -14,12 +14,26 @@ const router = createRouter({
       }
     },
     {
-      path: '/about',
-      name: 'about',
+      path: '/chi-tiet/:slug',
+      name: 'chi-tiet',
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue'),
+      component: () => import('../views/detail/Detail.vue'),
+      meta: {
+        layout: 'GuestLayout'
+      }
+    },
+    {
+      path: '/play/:slug',
+      name: 'xem',
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/detail/PlayMovie.vue'),
+      meta: {
+        layout: 'GuestLayout'
+      }
     },
   ],
 })

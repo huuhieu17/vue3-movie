@@ -4,8 +4,9 @@ import { Swiper, SwiperSlide } from 'swiper/vue'
 import MovieItem from '@/components/movie-item/Movie-Item.vue'
 import { onMounted, ref } from 'vue'
 import httpClient from '@/utils/httpClient.ts'
+import type { Movie } from '@/interfaces'
 
-const listData = ref([])
+const listData = ref<Movie[] | null>([])
 
 onMounted(async () => {
   const { data } = await httpClient({
@@ -16,7 +17,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <section class="px-8 py-6 w-full">
+  <section class="lg:px-8 px-2 lg:py-6 py-3 w-full">
     <h2 class="text-2xl font-semibold">Phim lẻ</h2>
     <swiper
       :slidesPerView="3"
@@ -26,8 +27,8 @@ onMounted(async () => {
       draggable="true"
       :breakpoints="{
         320: {
-          slidesPerView: 2,
-          spaceBetween: 20,
+          slidesPerView: 3,
+          spaceBetween: 5,
         },
         768: {
           slidesPerView: 4,
@@ -45,7 +46,7 @@ onMounted(async () => {
       :modules="[Navigation]"
       class="mySwiper"
     >
-      <swiper-slide class="mt-4" v-for="data in listData">
+      <swiper-slide class="mt-4" v-for="data in listData" :key="data._id">
         <MovieItem :data="data" />
       </swiper-slide>
       ...
