@@ -6,6 +6,7 @@ import type { ResponseMovie } from '@/interfaces/home.ts'
 import { VideoPlayer } from '@videojs-player/vue'
 import { NCollapse, NCollapseItem } from 'naive-ui'
 import NewFilm from '@/views/home/NewFilm.vue'
+import { appConfig } from '@/utils/config.ts'
 
 const route = useRoute()
 const router = useRouter()
@@ -39,6 +40,7 @@ const playEspisode = (_episode: string) => {
       autoplay: true,
       controls: true,
       controlBar: { timeDivider: false, durationDisplay: false },
+      poster: movieData.value && appConfig.imageUrl + '/uploads/movies/' + movieData.value.item.poster_url,
       sources: [
         {
           src: episodeByQuery.servers[0].link_m3u8,
