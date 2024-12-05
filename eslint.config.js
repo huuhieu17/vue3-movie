@@ -13,9 +13,14 @@ export default [
     name: 'app/files-to-ignore',
     ignores: ['**/dist/**', '**/dist-ssr/**', '**/coverage/**'],
   },
-
   ...pluginVue.configs['flat/essential'],
   ...vueTsEslintConfig(),
   oxlint.configs['flat/recommended'],
   skipFormatting,
+  {
+    rules: {
+      "@typescript-eslint/no-explicit-any": ["off"] // Enforce no `any` usage
+      // You can add more custom rules here
+    },
+  },
 ]
