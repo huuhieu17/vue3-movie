@@ -117,8 +117,8 @@ watch(playerOptions, () => {
           <div class="w-full flex flex-wrap gap-4">
             <div
               @click="playEspisode(item.slug)"
-              class="bg-gray-900 px-5 py-2 cursor-pointer text-sm"
-              :class="episode === item.slug && 'bg-gray-500'"
+              class=" px-5 py-2 cursor-pointer text-sm"
+              :class="currentEpisode.slug == item.slug ? 'bg-gray-500' : 'bg-gray-900'"
               v-for="item in listEpisodeData"
               :key="item.name"
             >
