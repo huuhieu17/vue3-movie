@@ -10,7 +10,9 @@
     class="flex items-center justify-between px-8 py-4"
   >
     <div class="flex items-center gap-[50px]">
-      <div class="text-2xl font-bold text-white">Vue Movie</div>
+      <div class="text-2xl font-bold text-white">
+        <RouterLink to="/">Steve Movie</RouterLink>
+      </div>
       <nav class="hidden sm:flex space-x-6">
         <RouterLink to="/" class="text-gray-300 hover:text-white font-bold">Trang chủ</RouterLink>
         <RouterLink to="/phim-le" class="text-gray-300 hover:text-white font-bold">Phim lẻ</RouterLink>
