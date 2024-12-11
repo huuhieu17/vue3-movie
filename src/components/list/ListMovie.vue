@@ -115,19 +115,19 @@ watch([currentPage, country, category, year], () => {
 
         <!-- Thể loại -->
         <n-form-item class="flex-1 w-full" label="Thể loại">
-          <n-select v-model:value="category" :clearable="true"
+          <n-select :filterable="true" v-model:value="category" :clearable="true"
             :options="categories.map((item) => ({ label: item.name, value: item.slug }))" placeholder="Chọn thể loại" />
         </n-form-item>
 
         <!-- Quốc gia -->
         <n-form-item class="flex-1 w-full" label="Quốc gia">
-          <n-select :clearable="true" v-model:value="country"
+          <n-select :filterable="true" :clearable="true" v-model:value="country"
             :options="countries.map((item) => ({ label: item.name, value: item.slug }))" placeholder="Chọn quốc gia" />
         </n-form-item>
 
         <!-- Năm -->
         <n-form-item class="flex-1 w-full" label="Năm">
-          <n-select :clearable="true" v-model:value="year" :options="[
+          <n-select :filterable="true" :clearable="true" v-model:value="year" :options="[
             ...[...Array(15)].map((_, index) => ({
               label: `Năm ${2024 - index}`,
               value: 2024 - index
