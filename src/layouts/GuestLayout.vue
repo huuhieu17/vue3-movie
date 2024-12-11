@@ -2,13 +2,10 @@
   <metainfo>
     <template v-slot:title="{ content }">{{ content }} - Yay!</template>
   </metainfo>
-  <header
-    :class="[
-      'fixed top-0 left-0 w-full z-50 transition duration-300',
-      isScrolled ? 'bg-black' : 'bg-transparent',
-    ]"
-    class="flex items-center justify-between px-8 py-4"
-  >
+  <header :class="[
+    'fixed top-0 left-0 w-full z-50 transition duration-300',
+    isScrolled ? 'bg-black' : 'bg-transparent',
+  ]" class="flex items-center justify-between px-8 py-4">
     <div class="flex items-center gap-[50px]">
       <div class="text-2xl font-bold text-white">
         <RouterLink to="/">Steve Movie</RouterLink>
@@ -17,17 +14,18 @@
         <RouterLink to="/" class="text-gray-300 hover:text-white font-bold">Trang chủ</RouterLink>
         <RouterLink to="/phim-le" class="text-gray-300 hover:text-white font-bold">Phim lẻ</RouterLink>
         <RouterLink to="/phim-bo" class="text-gray-300 hover:text-white font-bold">Phim bộ</RouterLink>
+        <RouterLink to="/phim-thuyet-minh" class="text-gray-300 hover:text-white font-bold">Phim thuyết minh
+        </RouterLink>
         <n-popover :overlap="overlap" placement="bottom-start" trigger="click">
           <template #trigger>
             <a href="#" class="text-gray-300 hover:text-white font-bold">Thể loại</a>
           </template>
           <div class="grid grid-cols-3 gap-3">
-            <div
-              v-for="category in categories"
-              :key="category.slug"
-              class="bg-transparent text-center rounded-md cursor-pointer hover:font-medium"
-            >
-              {{ category.name }}
+            <div v-for="category in categories" :key="category.slug"
+              class="bg-transparent text-center rounded-md cursor-pointer hover:font-medium">
+              <RouterLink :to="'/the-loai?category=' + category.slug">
+                {{ category.name }}
+              </RouterLink>
             </div>
           </div>
         </n-popover>
@@ -36,12 +34,11 @@
             <a href="#" class="text-gray-300 hover:text-white font-bold">Quốc gia</a>
           </template>
           <div class="grid grid-cols-3 gap-3">
-            <div
-              v-for="country in countries"
-              :key="country.slug"
-              class="bg-transparent text-center rounded-md cursor-pointer hover:font-medium"
-            >
-              {{ country.name }}
+            <div v-for="country in countries" :key="country.slug"
+              class="bg-transparent text-center rounded-md cursor-pointer hover:font-medium">
+              <RouterLink :to="'/quoc-gia?country=' + country.slug">
+                {{ country.name }}
+              </RouterLink>
             </div>
           </div>
         </n-popover>
@@ -74,6 +71,12 @@
             <div class="flex space-x-4 items-center">
               <font-awesome-icon class="text-gray-300" :icon="['fas', 'list']" />
               <span>Phim bộ</span>
+            </div>
+          </RouterLink>
+          <RouterLink to="/phim-thuyet-minh" class="block text-gray-300 font-bold hover:text-white">
+            <div class="flex space-x-4 items-center">
+              <font-awesome-icon class="text-gray-300" :icon="['fas', 'list']" />
+              <span>Phim thuyết minh</span>
             </div>
           </RouterLink>
           <RouterLink to="/the-loai" class="block text-gray-300 font-bold hover:text-white">

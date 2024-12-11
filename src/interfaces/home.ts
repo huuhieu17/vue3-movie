@@ -16,9 +16,10 @@ export interface CategoriesState {
 }
 
 export interface Countries {
-  _id: string;
+  _id?: string;
   name: string;
-  slug: string;
+  slug?: string;
+  code: string
 }
 
 export interface CountriesState {

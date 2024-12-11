@@ -90,40 +90,29 @@ watch(playerOptions, () => {
   <div class="mt-16 lg:px-20 px-2 lg:flex block" v-if="movieData">
     <div class="lg:w-4/5 w-full">
       <div class="video-player w-full">
-        <VideoPlayer
-          class="!w-full !h-auto aspect-video"
-          ref="videoPlayer"
-          :key="playerOptions"
-          :options="playerOptions"
-        />
+        <VideoPlayer class="!w-full !h-auto aspect-video" ref="videoPlayer" :key="playerOptions"
+          :options="playerOptions" />
       </div>
     </div>
     <div class="lg:w-1/5 w-full lg:px-4 lg:mt-0 mt-5">
       <div class="text-2xl">
-        {{ movieData.item.name }} - Tập {{currentEpisode.name}}
+        {{ movieData.item.name }} - Tập {{ currentEpisode.name }}
       </div>
       <n-collapse class="mt-4" default-expanded-names="1">
         <div v-if="currentEpisode && currentEpisode.servers">
           <div class="mb-2">Server</div>
           <div class="w-full flex flex-wrap gap-4">
-            <div
-              class="bg-gray-900 px-5 py-2 cursor-pointer"
-              v-for="(item, index) in currentEpisode.servers"
-              :key="index"
-            >
+            <div class="bg-gray-900 px-5 py-2 cursor-pointer" v-for="(item, index) in currentEpisode.servers"
+              :key="index">
               {{ item.name }}
             </div>
           </div>
         </div>
         <n-collapse-item class="font-bold" title="Danh sách tập" name="1">
           <div class="w-full flex flex-wrap gap-4">
-            <div
-              @click="playEspisode(item.slug)"
-              class="px-5 py-2 cursor-pointer text-sm"
-              :class="currentEpisode.slug == item.slug ? 'bg-gray-500' : 'bg-gray-900'"
-              v-for="item in listEpisodeData"
-              :key="item.name"
-            >
+            <div @click="playEspisode(item.slug)" class="px-5 py-2 cursor-pointer text-sm"
+              :class="currentEpisode.slug == item.slug ? 'bg-gray-500' : 'bg-gray-900'" v-for="item in listEpisodeData"
+              :key="item.name">
               {{ item.name }}
             </div>
           </div>
@@ -134,10 +123,14 @@ watch(playerOptions, () => {
   <div class="mt-5 lg:px-20 px-2" v-if="movieData">
     <div class="lg:text-2xl">{{ movieData.item.name }} - {{ movieData.item.origin_name }}</div>
     <div class="flex items-center mt-2">
-      {{ movieData.item.year }} | {{ movieData.item.time }} | {{ movieData.item.country[0].name }} |
+      {{ movieData.item.year }} | {{ movieData.item.time }} | <RouterLink class="mx-2"
+        :to="'/quoc-gia?country=' + movieData.item.country[0].slug">{{ ' ' + movieData.item.country[0].name + ' ' }}
+      </RouterLink> |
       {{ movieData.item.episode_current }} |
       <span class="ml-1" v-for="cate in movieData.item.category" :key="cate.id">
-        {{ cate.name }} ·
+        <RouterLink class="mx-2" :to="'/the-loai?category=' + cate.slug">{{ cate.name }} ·
+        </RouterLink>
+
       </span>
     </div>
     <div class="mt-4" v-html="movieData.item.content"></div>

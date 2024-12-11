@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import Layout from '@/layouts/Layout.vue'
-import { RouterView } from 'vue-router'
-import { darkTheme } from 'naive-ui'
-import { NConfigProvider } from 'naive-ui'
-import { onMounted } from 'vue'
 import { useHomeDataStore } from '@/stores/base.ts'
+import { darkTheme, NConfigProvider, NLoadingBarProvider } from 'naive-ui'
+import { onMounted } from 'vue'
+import { RouterView } from 'vue-router'
 
 onMounted(() => {
   const homeStore = useHomeDataStore();
@@ -14,8 +13,11 @@ onMounted(() => {
 
 <template>
   <n-config-provider :theme="darkTheme">
-    <Layout>
-      <RouterView />
-    </Layout>
+    <n-loading-bar-provider>
+      <Layout>
+        <RouterView />
+      </Layout>
+    </n-loading-bar-provider>
+
   </n-config-provider>
 </template>
