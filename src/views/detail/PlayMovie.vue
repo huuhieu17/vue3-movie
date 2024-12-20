@@ -122,7 +122,7 @@ watch(playerOptions, () => {
   </div>
   <div class="mt-5 lg:px-20 px-2" v-if="movieData">
     <div class="lg:text-2xl">{{ movieData.item.name }} - {{ movieData.item.origin_name }}</div>
-    <div class="flex items-center mt-2">
+    <div class="flex items-center mt-2 flex-wrap">
       {{ movieData.item.year }} | {{ movieData.item.time }} | <RouterLink class="mx-2"
         :to="'/quoc-gia?country=' + movieData.item.country[0].slug">{{ ' ' + movieData.item.country[0].name + ' ' }}
       </RouterLink> |
