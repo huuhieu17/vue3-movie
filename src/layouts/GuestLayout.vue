@@ -74,37 +74,37 @@
     <n-drawer v-model:show="activeDrawer" placement="left">
       <n-drawer-content title="">
         <nav class="space-y-6 flex flex-col">
-          <RouterLink to="/" class="block text-gray-300 font-bold hover:text-white">
+          <RouterLink to="/" @click="activeDrawer = false" class="block text-gray-300 font-bold hover:text-white">
             <div class="flex space-x-4 items-center">
               <font-awesome-icon class="text-gray-300" :icon="['fas', 'home']" />
               <span>Trang chủ</span>
             </div>
           </RouterLink>
-          <RouterLink to="/phim-le" class="block text-gray-300 font-bold hover:text-white">
+          <RouterLink to="/phim-le" @click="activeDrawer = false" class="block text-gray-300 font-bold hover:text-white">
             <div class="flex space-x-4 items-center">
               <font-awesome-icon class="text-gray-300" :icon="['fas', 'film']" />
               <span>Phim lẻ</span>
             </div>
           </RouterLink>
-          <RouterLink to="/phim-bo" class="block text-gray-300 font-bold hover:text-white">
+          <RouterLink to="/phim-bo" @click="activeDrawer = false" class="block text-gray-300 font-bold hover:text-white">
             <div class="flex space-x-4 items-center">
               <font-awesome-icon class="text-gray-300" :icon="['fas', 'list']" />
               <span>Phim bộ</span>
             </div>
           </RouterLink>
-          <RouterLink to="/phim-thuyet-minh" class="block text-gray-300 font-bold hover:text-white">
+          <RouterLink to="/phim-thuyet-minh" @click="activeDrawer = false" class="block text-gray-300 font-bold hover:text-white">
             <div class="flex space-x-4 items-center">
               <font-awesome-icon class="text-gray-300" :icon="['fas', 'list']" />
               <span>Phim thuyết minh</span>
             </div>
           </RouterLink>
-          <RouterLink to="/the-loai" class="block text-gray-300 font-bold hover:text-white">
+          <RouterLink to="/the-loai" @click="activeDrawer = false" class="block text-gray-300 font-bold hover:text-white">
             <div class="flex space-x-4 items-center">
               <font-awesome-icon class="text-gray-300" :icon="['fas', 'archive']" />
               <span>Thể loại</span>
             </div>
           </RouterLink>
-          <RouterLink to="/quoc-gia" class="block text-gray-300 font-bold hover:text-white">
+          <RouterLink to="/quoc-gia" @click="activeDrawer = false" class="block text-gray-300 font-bold hover:text-white">
             <div class="flex space-x-4 items-center">
               <font-awesome-icon class="text-gray-300" :icon="['fas', 'globe']" />
               <span>Quốc gia</span>
