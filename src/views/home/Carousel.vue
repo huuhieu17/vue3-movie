@@ -65,8 +65,8 @@ const getListData = async () => {
           </div>
         </div>
         <div class="flex lg:mt-6 mt-2 space-x-4">
-          <button class="lg:px-6 px-3 lg:py-4 py-2 bg-white text-black font-medium rounded">
-            <RouterLink :to="`/chi-tiet/${data.slug}`">Chi tiết</RouterLink>
+          <button class="lg:px-6 px-3 lg:py-3 py-2 bg-white text-black rounded">
+            <RouterLink :to="`/chi-tiet/${data.slug}`" class="font-bold">Chi tiết</RouterLink>
           </button>
         </div>
       </div>
