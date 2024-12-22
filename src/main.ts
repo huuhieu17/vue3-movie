@@ -8,8 +8,7 @@ import { createMetaManager } from 'vue-meta'
 import { register } from 'swiper/element/bundle';
 import 'swiper/css';
 import 'swiper/css/pagination';
-import 'video.js/dist/video-js.css'
-
+import '@vime/core/themes/default.css';
 const app = createApp(App)
 
 app.component('FontAwesomeIcon', FontAwesomeIcon)

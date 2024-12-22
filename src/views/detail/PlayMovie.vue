@@ -3,12 +3,30 @@ import { useRoute, useRouter } from 'vue-router'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import httpClient from '@/utils/httpClient.ts'
 import type { ResponseMovie } from '@/interfaces/home.ts'
-import { VideoPlayer } from '@videojs-player/vue'
-import { NCollapse, NCollapseItem } from 'naive-ui'
+import { NCollapse, NCollapseItem, NTooltip } from 'naive-ui'
 import NewFilm from '@/views/home/NewFilm.vue'
 import { appConfig } from '@/utils/config.ts'
-
-import 'videojs-landscape-fullscreen'
+import {
+  Captions,
+  ClickToPlay,
+  ControlGroup,
+  Controls,
+  ControlSpacer,
+  DblClickFullscreen,
+  DefaultSettings,
+  FullscreenControl,
+  Hls,
+  LoadingScreen,
+  PipControl,
+  PlaybackControl,
+  Player,
+  Scrim,
+  ScrubberControl,
+  SettingsControl,
+  TimeProgress,
+  Ui,
+  VolumeControl,
+} from '@vime/vue-next'
 
 const route = useRoute()
 const router = useRouter()
@@ -23,6 +41,8 @@ const currentEpisode = ref<any>(null)
 const episodeRefs = reactive<any>([])
 
 const playerOptions = ref<any>({})
+
+const playerRef = ref<any>(null)
 
 const updateRefs = (el: any, index: number) => {
   episodeRefs[index] = el
@@ -50,34 +70,27 @@ const playEspisode = (_episode: string) => {
   currentEpisode.value = episodeByQuery
   if (episodeByQuery) {
     playerOptions.value = {
-      autoplay: true,
-      controls: true,
-      playbackRates: [0.5, 1, 1.5, 2],
-      controlBar: {
-        timeDivider: true,
-        durationDisplay: false,
-        remainingTimeDisplay: false,
-        currentTimeDisplay: true,
-        volumeControl: true,
-        playToggle: true,
-        progressControl: true,
-        fullscreenToggle: true,
-        skipButtons: true,
-      },
-      enableSmoothSeeking: true,
-      plugins: {},
       poster:
         movieData.value &&
         appConfig.imageUrl + '/uploads/movies/' + movieData.value.item.poster_url,
-      sources: [
-        {
-          src: episodeByQuery.servers[0].link_m3u8,
-          type: 'application/x-mpegURL',
-        },
-      ],
+      sources: episodeByQuery.servers[0].link_m3u8,
     }
   }
   updateMetaTitle()
+}
+
+const playNextEspisode = () => {
+  const indexOfCurrentEspisode = listEpisodeData.value.findIndex((item: any) => item.slug === currentEpisode.value.slug);
+  if(indexOfCurrentEspisode !== -1 && listEpisodeData.value.length > indexOfCurrentEspisode) {
+    playEspisode(listEpisodeData.value[indexOfCurrentEspisode + 1].slug)
+  }
+}
+
+const playPreviousEspisode = () => {
+  const indexOfCurrentEspisode = listEpisodeData.value.findIndex((item: any) => item.slug === currentEpisode.value.slug);
+  if(indexOfCurrentEspisode !== -1 && indexOfCurrentEspisode > 0) {
+    playEspisode(listEpisodeData.value[indexOfCurrentEspisode - 1].slug)
+  }
 }
 
 const scrollToActiveEpisode = () => {
@@ -111,7 +124,7 @@ onMounted(async () => {
   const listEpisodes = filmDetail.episodes ?? []
   if (listEpisodes && listEpisodes.length > 0) {
     // Mặc định mở tập phim ở server 1
-    const transformedEpisodes = listEpisodes[0].server_data.map((episode) => {
+    listEpisodeData.value = listEpisodes[0].server_data.map((episode) => {
       return {
         name: episode.name,
         slug: episode.slug,
@@ -122,7 +135,6 @@ onMounted(async () => {
         })),
       }
     })
-    listEpisodeData.value = transformedEpisodes
     playEspisode(episode.value as string)
   }
 })
@@ -136,6 +148,9 @@ watch(currentEpisode, () => {
       block: 'center',
       inline: 'center',
     })
+    const child = videoPlayer.value.children[0]
+    const player =
+    console.log(child)
   }
 })
 </script>
@@ -151,12 +166,58 @@ watch(currentEpisode, () => {
           }
         "
       >
-        <VideoPlayer
-          class="!w-full !h-auto aspect-video"
-          id="video-player"
-          :key="playerOptions"
-          :options="playerOptions"
-        />
+        <Player ref="playerRef" autoplay theme="dark" style="--vm-player-theme: #000">
+          <Hls version="latest" :poster="playerOptions.poster">
+            <source :data-src="playerOptions.sources" type="application/x-mpegURL" />
+          </Hls>
+
+          <Ui>
+            <LoadingScreen> </LoadingScreen>
+            <ClickToPlay />
+            <DblClickFullscreen />
+            <Scrim />
+            <TapSidesToSeek />
+            <Controls fullWidth :activeDuration="3200">
+              <ControlGroup>
+                <ScrubberControl />
+              </ControlGroup>
+
+              <ControlGroup space="top">
+                <PlaybackControl />
+                <VolumeControl />
+                <TimeProgress separator="/" />
+                <n-tooltip trigger="hover">
+                  <template #trigger>
+                    <button @click="playPreviousEspisode" class="ml-4">
+                      <font-awesome-icon
+                        class="text-gray-300 text-lg"
+                        :icon="['fas', 'backward-step']"
+                      />
+                    </button>
+                  </template>
+                  Tập truớc
+                </n-tooltip>
+                <n-tooltip trigger="hover">
+                  <template #trigger>
+                    <button @click="playNextEspisode" class="ml-4">
+                      <font-awesome-icon
+                        class="text-gray-300 text-lg"
+                        :icon="['fas', 'forward-step']"
+                      />
+                    </button>
+                  </template>
+                  Tập kế tiếp
+                </n-tooltip>
+                <ControlSpacer />
+                <Captions />
+                <SettingsControl />
+                <PipControl />
+                <FullscreenControl />
+              </ControlGroup>
+            </Controls>
+            <DefaultSettings />
+          </Ui>
+        </Player>
       </div>
     </div>
     <div class="xl:w-1/5 w-full lg:px-4 xl:mt-0 mt-5">

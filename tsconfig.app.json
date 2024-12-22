@@ -4,6 +4,9 @@
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
     "composite": true,
+    "noImplicitAny": false,
+    "verbatimModuleSyntax": true,
+    "allowJs": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "typeRoots": ["./node_modules/@types", "./src/types"],
     "paths": {

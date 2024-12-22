@@ -20,11 +20,11 @@
     "@fortawesome/free-regular-svg-icons": "^6.7.1",
     "@fortawesome/free-solid-svg-icons": "^6.7.1",
     "@fortawesome/vue-fontawesome": "^3.0.8",
-    "@videojs-player/vue": "^1.0.0",
+    "@vime/core": "^5.4.1",
+    "@vime/vue-next": "^5.4.1",
     "axios": "^1.7.8",
     "pinia": "^2.2.6",
     "swiper": "^11.1.15",
-    "video.js": "^8.20.0",
     "vue": "^3.5.13",
     "vue-meta": "^3.0.0-alpha.10",
     "vue-router": "^4.4.5"
