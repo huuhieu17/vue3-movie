@@ -13,7 +13,7 @@ import {
   Controls,
   ControlSpacer,
   DblClickFullscreen,
-  DefaultSettings,
+  DefaultSettings, DefaultUi,
   FullscreenControl,
   Hls,
   LoadingScreen,
@@ -25,7 +25,7 @@ import {
   SettingsControl,
   TimeProgress,
   Ui,
-  VolumeControl,
+  VolumeControl
 } from '@vime/vue-next'
 
 const route = useRoute()
@@ -166,57 +166,11 @@ watch(currentEpisode, () => {
           }
         "
       >
-        <Player ref="playerRef" autoplay theme="dark" style="--vm-player-theme: #000">
+        <Player ref="playerRef" autoplay theme="dark" style="--vm-player-theme: #e86c8b;">
           <Hls version="latest" :poster="playerOptions.poster">
             <source :data-src="playerOptions.sources" type="application/x-mpegURL" />
           </Hls>
-
-          <Ui>
-            <LoadingScreen> </LoadingScreen>
-            <ClickToPlay />
-            <DblClickFullscreen />
-            <Scrim />
-            <TapSidesToSeek />
-            <Controls fullWidth :activeDuration="3200">
-              <ControlGroup>
-                <ScrubberControl />
-              </ControlGroup>
-
-              <ControlGroup space="top">
-                <PlaybackControl />
-                <VolumeControl />
-                <TimeProgress separator="/" />
-                <n-tooltip trigger="hover">
-                  <template #trigger>
-                    <button @click="playPreviousEspisode" class="ml-4">
-                      <font-awesome-icon
-                        class="text-gray-300 text-lg"
-                        :icon="['fas', 'backward-step']"
-                      />
-                    </button>
-                  </template>
-                  Tập truớc
-                </n-tooltip>
-                <n-tooltip trigger="hover">
-                  <template #trigger>
-                    <button @click="playNextEspisode" class="ml-4">
-                      <font-awesome-icon
-                        class="text-gray-300 text-lg"
-                        :icon="['fas', 'forward-step']"
-                      />
-                    </button>
-                  </template>
-                  Tập kế tiếp
-                </n-tooltip>
-                <ControlSpacer />
-                <Captions />
-                <SettingsControl />
-                <PipControl />
-                <FullscreenControl />
-              </ControlGroup>
-            </Controls>
-            <DefaultSettings />
-          </Ui>
+          <DefaultUi />
         </Player>
       </div>
     </div>
