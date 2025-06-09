@@ -1,11 +1,12 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
-import { NCarousel, NRate, NSpace, NSkeleton } from 'naive-ui'
-import httpClient from '@/utils/httpClient.ts'
-import { appConfig } from '@/utils/config.ts'
 import LazyImage from '@/components/Image/Image.vue'
+import type { Movie } from '@/interfaces'
+import { appConfig } from '@/utils/config.ts'
+import httpClient from '@/utils/httpClient.ts'
+import { NCarousel, NSkeleton, NSpace } from 'naive-ui'
+import { onMounted, ref } from 'vue'
 
-const listData = ref([])
+const listData = ref<Movie[] | null>([])
 const loading = ref(true);
 onMounted(async () => {
   await getListData()
@@ -35,23 +36,22 @@ const getListData = async () => {
         <h1 class="lg:text-5xl text-xl font-bold text-[#B0E633]">{{ data.origin_name }}</h1>
         <h2 class="lg:text-3xl text-md font-bold">{{ data.name }}</h2>
         <div class="lg:flex block items-center lg:space-x-4 font-bold lg:mt-4 mt-2">
-          <div class="items-center flex space-x-1 pl-0">
+          <div class="items-center flex space-x-1 lg:border border-0 border-[#fff] px-2 py-1 rounded">
             <font-awesome-icon :icon="['fas', 'calendar']" />
             <span class="font-bold text-sm"> {{ data.year }} </span>
           </div>
-          <div class="items-center flex space-x-1 pl-0">
+          <div class="items-center flex space-x-1 lg:border border-0 border-[#fff] px-2 py-1 rounded">
             <font-awesome-icon :icon="['fas', 'clock']" />
             <span class="font-bold text-sm"> {{ data.time }} </span>
           </div>
-          <div class="items-center flex space-x-1 pl-0">
+          <div class="items-center flex space-x-1 lg:border border-0 border-[#fff] px-2 py-1 rounded">
             <font-awesome-icon :icon="['fas', 'bars']" />
             <span class="font-bold text-sm"> {{ data.episode_current }} </span>
           </div>
-          <div class="flex items-center">
-            <strong class="mr-2 text-sm">Rating:</strong>
+          <div class="flex items-center text-[#ffff00] lg:border border-0 border-[#ffff00] px-2 py-1 rounded">
+            <strong class="mr-2 text-sm">IMDb:</strong>
             <!-- NRate for vote_average -->
-            <NRate :value="data.tmdb.vote_average / 2" readonly size="small" />
-            <span class="ml-2 text-sm">({{ data.tmdb.vote_count }})</span>
+            <span class="ml-2 text-sm font-medium">{{ data.tmdb.vote_average }}</span>
           </div>
         </div>
         <div class="font-bold space-y-2 mt-2">
@@ -66,7 +66,7 @@ const getListData = async () => {
         </div>
         <div class="flex lg:mt-6 mt-2 space-x-4">
           <button class="lg:px-6 px-3 lg:py-3 py-2 bg-white text-black rounded">
-            <RouterLink :to="`/chi-tiet/${data.slug}`" class="font-bold">Chi tiết</RouterLink>
+            <RouterLink :to="`/chi-tiet/${data.slug}`" class="font-bold">Xem ngay</RouterLink>
           </button>
         </div>
       </div>

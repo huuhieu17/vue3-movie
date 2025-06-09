@@ -6,6 +6,7 @@ import PhimBo from '@/views/home/PhimBo.vue'
 import HoatHinh from '@/views/home/HoatHinh.vue'
 
 import { useMeta } from 'vue-meta'
+import { onBeforeMount } from 'vue'
 
 useMeta({
   title: 'Steve Movie',
@@ -14,6 +15,11 @@ useMeta({
     { name: 'keywords', content: 'phim lẻ, phim bộ, phim thuyết minh' },
   ],
 })
+
+onBeforeMount(() => {
+  document.title = 'Steve Movie - Xem Phim Online'
+})
+
 </script>
 
 <template>

@@ -1,32 +1,35 @@
 <script setup lang="ts">
-import { useRoute, useRouter } from 'vue-router'
-import { computed, onMounted, reactive, ref, watch } from 'vue'
-import httpClient from '@/utils/httpClient.ts'
 import type { ResponseMovie } from '@/interfaces/home.ts'
-import { NCollapse, NCollapseItem, NTooltip } from 'naive-ui'
-import NewFilm from '@/views/home/NewFilm.vue'
 import { appConfig } from '@/utils/config.ts'
+import httpClient from '@/utils/httpClient.ts'
+import NewFilm from '@/views/home/NewFilm.vue'
 import {
+  CaptionControl,
   Captions,
   ClickToPlay,
   ControlGroup,
   Controls,
   ControlSpacer,
   DblClickFullscreen,
-  DefaultSettings, DefaultUi,
+  DefaultSettings,
   FullscreenControl,
   Hls,
   LoadingScreen,
+  MuteControl,
   PipControl,
   PlaybackControl,
   Player,
+  Poster,
   Scrim,
   ScrubberControl,
   SettingsControl,
+  Spinner,
   TimeProgress,
-  Ui,
-  VolumeControl
+  Ui
 } from '@vime/vue-next'
+import { NCollapse, NCollapseItem } from 'naive-ui'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
 const router = useRouter()
@@ -74,6 +77,7 @@ const playEspisode = (_episode: string) => {
         movieData.value &&
         appConfig.imageUrl + '/uploads/movies/' + movieData.value.item.poster_url,
       sources: episodeByQuery.servers[0].link_m3u8,
+
     }
   }
   updateMetaTitle()
@@ -158,19 +162,45 @@ watch(currentEpisode, () => {
 <template>
   <div class="mt-16 xl:px-20 px-2 xl:flex block" v-if="movieData && playerOptions">
     <div class="xl:w-4/5 w-full">
-      <div
-        class="video-player w-full"
-        :ref="
+      <div class="video-player w-full" :ref="
           (el) => {
             videoPlayer = el
           }
-        "
-      >
+        ">
         <Player ref="playerRef" autoplay theme="dark" style="--vm-player-theme: #e86c8b;">
           <Hls version="latest" :poster="playerOptions.poster">
             <source :data-src="playerOptions.sources" type="application/x-mpegURL" />
           </Hls>
-          <DefaultUi />
+          <!-- <DefaultUi /> -->
+          <Ui>
+            <Scrim />
+            <Poster />
+            <LoadingScreen />
+            <ClickToPlay />
+            <DblClickFullscreen />
+            <Spinner />
+            <DefaultSettings />
+            <Controls fullWidth pin="bottomLeft">
+
+              <ControlGroup>
+                <Captions />
+                <ScrubberControl />
+              </ControlGroup>
+
+              <ControlGroup space="top" style="align-items: center;">
+                <PlaybackControl />
+                <MuteControl />
+                <TimeProgress />
+                <ControlSpacer />
+                <PipControl />
+                <CaptionControl />
+                <SettingsControl tooltip-position="bottom" tooltip-direction="right" />
+                <FullscreenControl />
+              </ControlGroup>
+
+
+            </Controls>
+          </Ui>
         </Player>
       </div>
     </div>
@@ -180,25 +210,18 @@ watch(currentEpisode, () => {
         <div v-if="currentEpisode && currentEpisode.servers">
           <div class="mb-2">Server</div>
           <div class="w-full flex flex-wrap gap-4">
-            <div
-              class="bg-gray-900 px-5 py-2 cursor-pointer"
-              v-for="(item, index) in currentEpisode.servers"
-              :key="index"
-            >
+            <div class="bg-gray-900 px-5 py-2 cursor-pointer" v-for="(item, index) in currentEpisode.servers"
+              :key="index">
               {{ item.name }}
             </div>
           </div>
         </div>
         <n-collapse-item class="font-bold" title="Danh sách tập" name="1">
           <div class="w-full flex flex-wrap gap-4 max-h-[65vh] overflow-y-auto">
-            <div
-              @click="playEspisode(item.slug)"
-              :ref="(el) => updateRefs(el, index)"
+            <div @click="playEspisode(item.slug)" :ref="(el) => updateRefs(el, index)"
               class="px-5 py-2 cursor-pointer text-sm"
               :class="currentEpisode.slug == item.slug ? 'bg-gray-500' : 'bg-gray-900'"
-              v-for="(item, index) in listEpisodeData"
-              :key="item.name"
-            >
+              v-for="(item, index) in listEpisodeData" :key="item.name">
               {{ item.name }}
             </div>
           </div>
@@ -216,8 +239,7 @@ watch(currentEpisode, () => {
       |
       {{ movieData.item.episode_current }} |
       <span class="ml-1" v-for="cate in movieData.item.category" :key="cate.id">
-        <RouterLink class="mx-2" :to="'/the-loai?category=' + cate.slug"
-          >{{ cate.name }} ·
+        <RouterLink class="mx-2" :to="'/the-loai?category=' + cate.slug">{{ cate.name }} ·
         </RouterLink>
       </span>
     </div>

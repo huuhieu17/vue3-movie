@@ -18,7 +18,10 @@ onMounted(async () => {
 
 <template>
   <section class="lg:px-8 px-2 lg:py-6 py-3 w-full">
-    <h2 class="text-2xl font-semibold">Phim mới</h2>
+    <h2 class="text-2xl font-semibold">
+      <RouterLink :to="`/phim-moi`">
+        Phim mới
+      </RouterLink></h2>
     <swiper
       :slidesPerView="3"
       :spaceBetween="30"

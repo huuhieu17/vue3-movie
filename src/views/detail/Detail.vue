@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
-import { onMounted, ref } from 'vue'
-import httpClient from '@/utils/httpClient.ts'
+import LazyImage from '@/components/Image/Image.vue'
 import type { ResponseMovie } from '@/interfaces/home.ts'
 import { appConfig } from '@/utils/config.ts'
-import LazyImage from '@/components/Image/Image.vue'
-import { NRate, NTabPane, NTabs } from 'naive-ui'
+import httpClient from '@/utils/httpClient.ts'
+import { NTabPane, NTabs } from 'naive-ui'
+import { onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const slug = route.params.slug
@@ -23,11 +23,8 @@ onMounted(async () => {
   <div class="min-h-screen w-full relative overflow-y-auto" v-if="movieData">
     <div class="absolute top-0 left-0 w-full h-full z-1">
       <div class="absolute inset-0 bg-gradient-to-b from-black/70 to-transparent"></div>
-      <LazyImage
-        className="!h-full w-full object-cover"
-        :src="`${appConfig.imageUrl}/uploads/movies/${movieData.item.poster_url}`"
-        :alt="movieData.item.name"
-      />
+      <LazyImage className="!h-full w-full object-cover"
+        :src="`${appConfig.imageUrl}/uploads/movies/${movieData.item.poster_url}`" :alt="movieData.item.name" />
     </div>
     <div class="absolute lg:inset-y-[20%] inset-y-[15%] left-0 z-10">
       <div class="w-full lg:p-8 p-2">
@@ -36,24 +33,21 @@ onMounted(async () => {
         </h1>
         <h2 class="lg:text-3xl text-md font-bold">{{ movieData.item.name }}</h2>
         <div class="mt-5 lg:w-2/3 w-full" v-html="movieData.item.content" />
-        <div class="lg:flex block items-center lg:space-x-4 font-bold lg:mt-4 mt-2">
+        <div class=" flex flex-col items-start gap-3 font-bold lg:mt-4 mt-2">
           <div class="items-center flex space-x-1 pl-0">
-            <font-awesome-icon :icon="['fas', 'calendar']" />
-            <span class="font-bold text-sm"> {{ movieData.item.year }} </span>
+            <span class="font-bold text-sm">Năm: {{ movieData.item.year }} </span>
           </div>
           <div class="items-center flex space-x-1 pl-0">
-            <font-awesome-icon :icon="['fas', 'clock']" />
-            <span class="font-bold text-sm"> {{ movieData.item.time }} </span>
+            <span class="font-bold text-sm">Thời lượng: {{ movieData.item.time }} </span>
           </div>
           <div class="items-center flex space-x-1 pl-0">
-            <font-awesome-icon :icon="['fas', 'bars']" />
-            <span class="font-bold text-sm"> {{ movieData.item.episode_current }} </span>
+            <span class="font-bold text-sm"> {{ movieData.item.episode_current }} / {{ movieData.item.episode_total }}
+            </span>
           </div>
-          <div class="flex items-center">
-            <strong class="mr-2 text-sm">Rating:</strong>
+          <div class="w-fit items-center text-[#ffff00] lg:border border-0 border-[#ffff00] px-2 py-1 rounded">
+            <strong class="mr-2 text-sm">IMDb:</strong>
             <!-- NRate for vote_average -->
-            <NRate :value="movieData.item.tmdb.vote_average / 2" readonly size="small" />
-            <span class="ml-2 text-sm">({{ movieData.item.tmdb.vote_count }})</span>
+            <span class="ml-2 text-sm font-medium">{{ movieData.item.tmdb.vote_average }}</span>
           </div>
         </div>
         <div class="font-bold space-y-2 mt-2">
@@ -71,25 +65,24 @@ onMounted(async () => {
             <RouterLink :to="`/play/${movieData.item.slug}`">Xem ngay</RouterLink>
           </button>
         </div>
-        <n-tabs class="mt-4 w-full" type="line" animated>
-          <n-tab-pane
-            class="flex flex-wrap gap-4"
-            v-for="(data, index) in movieData.item.episodes"
-            :key="index"
-            :name="data.server_name"
-            :tab="data.server_name"
-          >
-            <RouterLink
-              :to="`/play/${movieData.item.slug}?episode=${_data.slug}`"
-              class="cursor-pointer bg-gray-900 rounded-2xl px-4 py-2"
-              v-for="(_data, _index) in data.server_data"
-              :key="_index"
-            >
-              Tập {{ _data.name }}
-            </RouterLink>
-          </n-tab-pane>
-        </n-tabs>
+
       </div>
     </div>
+  </div>
+  <div>
+    <div class="" v-if="movieData">
+          <div class="lg:p-8 p-2">
+            <n-tabs class=" w-full" type="line" animated>
+              <n-tab-pane class="flex flex-wrap gap-4" v-for="(data, index) in movieData.item.episodes" :key="index"
+                :name="data.server_name" :tab="data.server_name">
+                <RouterLink :to="`/play/${movieData.item.slug}?episode=${_data.slug}`"
+                  class="cursor-pointer bg-gray-900 rounded-2xl px-4 py-2" v-for="(_data, _index) in data.server_data"
+                  :key="_index">
+                  Tập {{ _data.name }}
+                </RouterLink>
+              </n-tab-pane>
+            </n-tabs>
+          </div>
+        </div>
   </div>
 </template>
