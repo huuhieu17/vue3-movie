@@ -180,7 +180,7 @@ watch(currentEpisode, () => {
             <DblClickFullscreen />
             <Spinner />
             <DefaultSettings />
-            <Controls fullWidth pin="bottomLeft">
+            <Controls fullWidth :activeDuration="2000" pin="bottomLeft">
 
               <ControlGroup>
                 <Captions />
