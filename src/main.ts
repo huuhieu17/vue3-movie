@@ -8,13 +8,15 @@ import { createMetaManager } from 'vue-meta'
 import { register } from 'swiper/element/bundle';
 import 'swiper/css';
 import 'swiper/css/pagination';
-import '@vime/core/themes/default.css';
-const app = createApp(App)
+import VueVideoPlayer from '@videojs-player/vue'
+import 'video.js/dist/video-js.css'
 
+const app = createApp(App)
 app.component('FontAwesomeIcon', FontAwesomeIcon)
 app.use(createPinia())
 app.use(router)
 app.use(createMetaManager(true, {}))
 app.mount('#app')
+app.use(VueVideoPlayer)
 // register Swiper custom elements
 register();

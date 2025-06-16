@@ -1,46 +1,21 @@
 <script setup lang="ts">
+import VideoPlayer from '@/components/player/Player.vue'
 import type { ResponseMovie } from '@/interfaces/home.ts'
 import { appConfig } from '@/utils/config.ts'
 import httpClient from '@/utils/httpClient.ts'
 import NewFilm from '@/views/home/NewFilm.vue'
-import {
-  CaptionControl,
-  Captions,
-  ClickToPlay,
-  ControlGroup,
-  Controls,
-  ControlSpacer,
-  DblClickFullscreen,
-  DefaultSettings,
-  FullscreenControl,
-  Hls,
-  LoadingScreen,
-  MuteControl,
-  PipControl,
-  PlaybackControl,
-  Player,
-  Poster,
-  Scrim,
-  ScrubberControl,
-  SettingsControl,
-  Spinner,
-  TimeProgress,
-  Ui
-} from '@vime/vue-next'
 import { NCollapse, NCollapseItem } from 'naive-ui'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
 const router = useRouter()
-
 const slug = route.params.slug
+const playerKey = ref(Date.now());
 const episode = computed(() => route.query.episode)
 const movieData = ref<ResponseMovie | null>(null)
 const listEpisodeData = ref<any>([])
-const videoPlayer = ref<any>(null)
 const currentEpisode = ref<any>(null)
-
 const episodeRefs = reactive<any>([])
 
 const playerOptions = ref<any>({})
@@ -72,29 +47,19 @@ const playEspisode = (_episode: string) => {
 
   currentEpisode.value = episodeByQuery
   if (episodeByQuery) {
+    const sourceUrl = episodeByQuery.servers[0].link_m3u8
     playerOptions.value = {
-      poster:
-        movieData.value &&
-        appConfig.imageUrl + '/uploads/movies/' + movieData.value.item.poster_url,
-      sources: episodeByQuery.servers[0].link_m3u8,
+      poster: movieData.value ? appConfig.imageUrl + '/uploads/movies/' + movieData.value.item.poster_url : '',
+      sources: [{
+        src: sourceUrl,
+        type: 'application/x-mpegURL'
+      }],
 
     }
+
+    playerKey.value = Date.now()
   }
   updateMetaTitle()
-}
-
-const playNextEspisode = () => {
-  const indexOfCurrentEspisode = listEpisodeData.value.findIndex((item: any) => item.slug === currentEpisode.value.slug);
-  if(indexOfCurrentEspisode !== -1 && listEpisodeData.value.length > indexOfCurrentEspisode) {
-    playEspisode(listEpisodeData.value[indexOfCurrentEspisode + 1].slug)
-  }
-}
-
-const playPreviousEspisode = () => {
-  const indexOfCurrentEspisode = listEpisodeData.value.findIndex((item: any) => item.slug === currentEpisode.value.slug);
-  if(indexOfCurrentEspisode !== -1 && indexOfCurrentEspisode > 0) {
-    playEspisode(listEpisodeData.value[indexOfCurrentEspisode - 1].slug)
-  }
 }
 
 const scrollToActiveEpisode = () => {
@@ -146,62 +111,25 @@ onMounted(async () => {
 watch(episodeRefs, scrollToActiveEpisode)
 
 watch(currentEpisode, () => {
-  if (videoPlayer.value) {
-    videoPlayer.value.scrollIntoView({
+  if (playerRef.value) {
+    console.log(1);
+
+    playerRef.value.scrollIntoView({
       behavior: 'smooth',
       block: 'center',
       inline: 'center',
     })
-    const child = videoPlayer.value.children[0]
-    const player =
-    console.log(child)
   }
 })
 </script>
 
 <template>
-  <div class="mt-16 xl:px-20 px-2 xl:flex block" v-if="movieData && playerOptions">
-    <div class="xl:w-4/5 w-full">
-      <div class="video-player w-full" :ref="
-          (el) => {
-            videoPlayer = el
-          }
-        ">
-        <Player ref="playerRef" autoplay theme="dark" style="--vm-player-theme: #e86c8b;">
-          <Hls version="latest" :poster="playerOptions.poster">
-            <source :data-src="playerOptions.sources" type="application/x-mpegURL" />
-          </Hls>
-          <!-- <DefaultUi /> -->
-          <Ui>
-            <Scrim />
-            <Poster />
-            <LoadingScreen />
-            <ClickToPlay />
-            <DblClickFullscreen />
-            <Spinner />
-            <DefaultSettings />
-            <Controls fullWidth :activeDuration="2000" pin="bottomLeft">
-
-              <ControlGroup>
-                <Captions />
-                <ScrubberControl />
-              </ControlGroup>
-
-              <ControlGroup space="top" style="align-items: center;">
-                <PlaybackControl />
-                <MuteControl />
-                <TimeProgress />
-                <ControlSpacer />
-                <PipControl />
-                <CaptionControl />
-                <SettingsControl tooltip-position="bottom" tooltip-direction="right" />
-                <FullscreenControl />
-              </ControlGroup>
-
-
-            </Controls>
-          </Ui>
-        </Player>
+  <div class="mt-16 xl:px-20 px-2 xl:flex block" v-if="movieData && playerOptions && currentEpisode">
+    <div class="xl:w-4/5 w-full h-full aspect-video">
+      <div class="video-player w-full h-full">
+        <VideoPlayer :key="playerKey" :videoData="{
+          playerOptions,
+        }" />
       </div>
     </div>
     <div class="xl:w-1/5 w-full lg:px-4 xl:mt-0 mt-5">
@@ -230,18 +158,46 @@ watch(currentEpisode, () => {
     </div>
   </div>
   <div class="mt-5 xl:px-20 px-2" v-if="movieData">
-    <div class="lg:text-2xl">{{ movieData.item.name }} - {{ movieData.item.origin_name }}</div>
-    <div class="flex items-center mt-2 flex-wrap">
-      {{ movieData.item.year }} | {{ movieData.item.time }} |
-      <RouterLink class="mx-2" :to="'/quoc-gia?country=' + movieData.item.country[0].slug">
-        {{ ' ' + movieData.item.country[0].name + ' ' }}
-      </RouterLink>
-      |
-      {{ movieData.item.episode_current }} |
-      <span class="ml-1" v-for="cate in movieData.item.category" :key="cate.id">
-        <RouterLink class="mx-2" :to="'/the-loai?category=' + cate.slug">{{ cate.name }} ·
+    <div class="text-2xl">{{ movieData.item.name }} - {{ movieData.item.origin_name }}</div>
+    <div class="flex mt-2 flex-col gap-2">
+      <div>
+        <font-awesome-icon :icon="['fas', 'calendar']" class="mr-1" /> <span>Năm sản xuất: </span> {{
+          movieData.item.year }}
+      </div>
+      <div>
+        <font-awesome-icon :icon="['fas', 'clock']" class="mr-1" /> <span>Thời lượng: </span> {{ movieData.item.time }}
+      </div>
+      <div>
+        <font-awesome-icon :icon="['fas', 'globe']" class="mr-1" />
+        <span>Quốc gia:</span>
+        <RouterLink class="mx-2" :to="'/quoc-gia?country=' + movieData.item.country[0].slug">
+          {{ ' ' + movieData.item.country[0].name + ' ' }}
         </RouterLink>
-      </span>
+      </div>
+      <div>
+        <font-awesome-icon :icon="['fas', 'archive']" class="mr-1" />
+        <span>Trạng thái: </span> {{ movieData.item.episode_current }} / {{ movieData.item.episode_total }}
+      </div>
+      <div>
+        <font-awesome-icon :icon="['fas', 'list']" class="mr-1" />
+        <span>Thể loại: </span> <span class="ml-1" v-for="cate in movieData.item.category" :key="cate.id">
+          <RouterLink class="mx-2" :to="'/the-loai?category=' + cate.slug">{{ cate.name }} ·
+          </RouterLink>
+        </span>
+      </div>
+      <div>
+        <font-awesome-icon :icon="['fas', 'user']" class="mr-1" />
+        <span>Đạo diễn: </span> <span class="ml-1" v-for="director in movieData.item.director" :key="director">
+          {{ director }} ·
+        </span>
+      </div>
+      <div>
+        <font-awesome-icon :icon="['fas', 'users']" class="mr-1" />
+        <span>Diễn viên: </span> <span class="ml-1" v-for="actor in movieData.item.actor" :key="actor">
+          {{ actor }} ·
+        </span>
+      </div>
+
     </div>
     <div class="mt-4" v-html="movieData.item.content"></div>
   </div>
