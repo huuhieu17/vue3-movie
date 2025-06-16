@@ -24,7 +24,6 @@ interface VideoData {
 
 import videojs from 'video.js'
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import 'videojs-seek-buttons'
 
 import { useRoute } from 'vue-router' // ⬅️ Để lấy slug & episode từ URL
 
