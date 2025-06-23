@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import VideoPlayer from '@/components/player/Player.vue'
-import type { ResponseMovie } from '@/interfaces/home.ts'
+import type { EpisodeData, ResponseMovie } from '@/interfaces/home.ts'
 import { appConfig } from '@/utils/config.ts'
 import httpClient from '@/utils/httpClient.ts'
 import NewFilm from '@/views/home/NewFilm.vue'
@@ -11,7 +11,6 @@ import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 const slug = route.params.slug
-const playerKey = ref(Date.now());
 const episode = computed(() => route.query.episode)
 const movieData = ref<ResponseMovie | null>(null)
 const listEpisodeData = ref<any>([])
@@ -56,8 +55,6 @@ const playEspisode = (_episode: string) => {
       }],
 
     }
-
-    playerKey.value = Date.now()
   }
   updateMetaTitle()
 }
@@ -112,7 +109,6 @@ watch(episodeRefs, scrollToActiveEpisode)
 
 watch(currentEpisode, () => {
   if (playerRef.value) {
-    console.log(1);
 
     playerRef.value.scrollIntoView({
       behavior: 'smooth',
@@ -127,8 +123,10 @@ watch(currentEpisode, () => {
   <div class="mt-16 xl:px-20 px-2 xl:flex block" v-if="movieData && playerOptions && currentEpisode">
     <div class="xl:w-4/5 w-full h-full aspect-video">
       <div class="video-player w-full h-full">
-        <VideoPlayer :key="playerKey" :videoData="{
-          playerOptions,
+        <VideoPlayer :key="currentEpisode.slug" :videoData="{
+            playerOptions,
+            currentEpisode
+
         }" />
       </div>
     </div>
@@ -162,7 +160,7 @@ watch(currentEpisode, () => {
     <div class="flex mt-2 flex-col gap-2">
       <div>
         <font-awesome-icon :icon="['fas', 'calendar']" class="mr-1" /> <span>Năm sản xuất: </span> {{
-          movieData.item.year }}
+        movieData.item.year }}
       </div>
       <div>
         <font-awesome-icon :icon="['fas', 'clock']" class="mr-1" /> <span>Thời lượng: </span> {{ movieData.item.time }}

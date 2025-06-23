@@ -80,7 +80,7 @@ interface CategoryCountry {
   slug: string;
 }
 
-interface EpisodeData {
+export interface EpisodeData {
   name: string;
   slug: string;
   filename: string;
