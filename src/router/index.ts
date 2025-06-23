@@ -82,6 +82,14 @@ const router = createRouter({
         layout: 'GuestLayout'
       }
     },
+    {
+      path: '/phim-moi',
+      name: 'phim-moi',
+      component: () => null,
+      meta: {
+        layout: 'GuestLayout'
+      }
+    },
   ],
 })
 
