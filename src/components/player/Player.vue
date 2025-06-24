@@ -1,10 +1,9 @@
 <template>
-  <!-- <video-player v-if="videoData && videoData.playerOptions" ref="videoPlayerRef" :autoplay="true" :options="videoData.playerOptions" class="w-full h-full"
-    controls :loop="true" /> -->
   <video class="video-js" id="videoPlayer" ref="videoPlayerRef"></video>
 </template>
 
 <script setup lang="ts">
+import 'videojs-contrib-quality-menu'
 
 interface VideoData {
   playerOptions: {
@@ -47,12 +46,15 @@ const defaultOption = {
   fluid: true,
   preload: 'auto',
   playbackRates: [0.5, 1, 1.5, 2],
+  currentTimeDisplay: true,
   enableSmoothSeeking: true,
   controlBar: {
+
     skipButtons: {
       forward: 10,
       backward: 10
-    }
+    },
+
   },
   userActions: {
     doubleClick: myDoubleClickHandler,
@@ -71,7 +73,8 @@ const defaultOption = {
 
         case 37: // Left Arrow = Rewind 5 seconds
           event.preventDefault();
-          player.currentTime(Math.max(0, player.currentTime() - 10));
+          // player.currentTime(Math.max(0, player.currentTime() - 10));
+          player.dispose()
           break;
 
         case 39: // Right Arrow = Forward 5 seconds
@@ -107,18 +110,53 @@ function myDoubleClickHandler(event) {
 
 const onPlayerReady = () => {
   console.log(player);
+  player.qualityMenu();
+  let qualityLevels = player.qualityLevels();
 
+  // disable quality levels with less than 720 horizontal lines of resolution when added
+  // to the list.
+  qualityLevels.on('addqualitylevel', function (event) {
+    let qualityLevel = event.qualityLevel;
+
+    if (qualityLevel.height >= 720) {
+      qualityLevel.enabled = true;
+    } else {
+      qualityLevel.enabled = false;
+    }
+  });
+
+  // example function that will toggle quality levels between SD and HD, defining and HD
+  // quality as having 720 horizontal lines of resolution or more
+  let toggleQuality = (function () {
+    let enable720 = true;
+
+    return function () {
+      for (let qualityLevel of qualityLevels) {
+        if (qualityLevel.height >= 720) {
+          qualityLevel.enabled = enable720;
+        } else {
+          qualityLevel.enabled = !enable720;
+        }
+      }
+      enable720 = !enable720;
+    };
+  })();
+
+  let currentSelectedQualityLevelIndex = qualityLevels.selectedIndex; // -1 if no level selected
+
+  // Listen to change events for when the player selects a new quality level
+  qualityLevels.on('change', function () {
+    console.log('Quality Level changed!');
+    console.log('New level:', qualityLevels[qualityLevels.selectedIndex]);
+  });
   // player.hlsQualitySelector({ displayCurrentQuality: true });
   // player.mobileUi();
 };
 
 function setupPlayer() {
   if (player) {
-
-
     player.dispose(); // clean up the old player
     videoPlayerRef.value?.dispose()
-    console.log('dispose');
   }
 
   player = videojs(videoPlayerRef.value!, {
@@ -140,7 +178,6 @@ function storeCurrentPlayingTime() {
     videoPlayerRef.value.player.src(initialSource);
   }
 
-
   const savedTime = parseFloat(localStorage.getItem(videoKey) || '0');
   player.on('loadedmetadata', () => {
     if (!isNaN(savedTime) && savedTime > 0 && savedTime < player.duration()) {
@@ -161,8 +198,7 @@ onMounted(() => {
 
 watch(() => episode, (newVal, oldVal) => {
   if (newVal !== oldVal) {
-    console.log('var change');
-
+    player && player.dispose()
     setupPlayer(); // reinitialize when episode changes
   }
 });
