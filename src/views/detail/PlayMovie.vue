@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import VideoPlayer from '@/components/player/Player.vue'
-import type { EpisodeData, ResponseMovie } from '@/interfaces/home.ts'
+import type { ResponseMovie } from '@/interfaces/home.ts'
 import { appConfig } from '@/utils/config.ts'
 import httpClient from '@/utils/httpClient.ts'
 import NewFilm from '@/views/home/NewFilm.vue'
