@@ -9,7 +9,6 @@ import 'videojs-mobile-ui/dist/videojs-mobile-ui.css';
 import chromecast from "@silvermine/videojs-chromecast";
 import "@silvermine/videojs-chromecast/dist/silvermine-videojs-chromecast.css";
 import 'videojs-landscape-fullscreen'
-import 'videojs-resolution-switcher-v8'
 import '../../assets/vjs-luxmty.min.css'
 interface VideoData {
   playerOptions: {
@@ -58,10 +57,6 @@ const defaultOption = {
       addButtonToControlBar: true,
       preloadWebComponents: true,
     },
-    videoJsResolutionSwitcher: {
-      default: 'high',
-      dynamicLabel: true
-    }
   },
   playbackRates: [0.5, 1, 1.5, 2],
   currentTimeDisplay: true,
