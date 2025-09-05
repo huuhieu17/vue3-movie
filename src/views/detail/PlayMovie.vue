@@ -13,9 +13,11 @@ const router = useRouter()
 const slug = route.params.slug
 const episode = computed(() => route.query.episode)
 const movieData = ref<ResponseMovie | null>(null)
-const listEpisodeData = ref<any>([])
+const listEpisodeData = ref<any[]>([])
+const listServerData = ref<any[]>([])
 const currentEpisode = ref<any>(null)
-const episodeRefs = reactive<any>([])
+const currentServer = ref<any>(null)
+const episodeRefs = reactive<any[]>([])
 
 const playerOptions = ref<any>({})
 
@@ -78,6 +80,22 @@ const scrollToActiveEpisode = () => {
   }
 }
 
+const changeServer = (server: any) => {
+  currentServer.value = server
+  listEpisodeData.value = server?.server_data.map((episode) => {
+    return {
+      name: episode.name,
+      slug: episode.slug,
+      servers: listServerData.value?.map((server) => ({
+        name: server.server_name,
+        link_embed: episode.link_embed,
+        link_m3u8: episode.link_m3u8,
+      })),
+    }
+  })
+  updateMetaTitle()
+}
+
 onMounted(async () => {
   const { data } = await httpClient({
     url: `/v1/api/phim/${slug}`,
@@ -87,14 +105,15 @@ onMounted(async () => {
   const filmDetail = movieData.value?.item
   if (!filmDetail) return
 
-  const listEpisodes = filmDetail.episodes ?? []
-  if (listEpisodes && listEpisodes.length > 0) {
+  listServerData.value = filmDetail.episodes ?? []
+  if (listServerData.value && listServerData.value.length > 0) {
+    currentServer.value = listServerData.value[0] || null;
     // Mặc định mở tập phim ở server 1
-    listEpisodeData.value = listEpisodes[0].server_data.map((episode) => {
+    listEpisodeData.value = currentServer.value?.server_data.map((episode) => {
       return {
         name: episode.name,
         slug: episode.slug,
-        servers: listEpisodes?.map((server) => ({
+        servers: listServerData.value?.map((server) => ({
           name: server.server_name,
           link_embed: episode.link_embed,
           link_m3u8: episode.link_m3u8,
@@ -132,12 +151,15 @@ watch(currentEpisode, () => {
     <div class="xl:w-1/5 w-full lg:px-4 xl:mt-0 mt-5">
       <div class="text-2xl">{{ movieData.item.name }} - Tập {{ currentEpisode.name }}</div>
       <n-collapse class="mt-4" default-expanded-names="1">
-        <div v-if="currentEpisode && currentEpisode.servers">
+        <div v-if="listServerData?.length > 0" class="mb-4">
           <div class="mb-2">Server</div>
           <div class="w-full flex flex-wrap gap-4">
-            <div class="bg-gray-900 px-5 py-2 cursor-pointer" v-for="(item, index) in currentEpisode.servers"
+            <div
+              :class="currentServer?.server_name === item.server_name ? 'bg-gray-500' : 'bg-gray-900'"
+              class=" px-5 py-2 cursor-pointer" v-for="(item, index) in listServerData"
+              @click="changeServer(item)"
               :key="index">
-              {{ item.name }}
+              {{ item.server_name }}
             </div>
           </div>
         </div>
@@ -146,7 +168,7 @@ watch(currentEpisode, () => {
             <div @click="playEspisode(item.slug)" :ref="(el) => updateRefs(el, index)"
               class="px-5 py-2 cursor-pointer text-sm"
               :class="currentEpisode.slug == item.slug ? 'bg-gray-500' : 'bg-gray-900'"
-              v-for="(item, index) in listEpisodeData" :key="item.name">
+              v-for="(item, index) in currentServer?.server_data" :key="item.name">
               {{ item.name }}
             </div>
           </div>

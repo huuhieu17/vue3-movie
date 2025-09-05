@@ -25,6 +25,9 @@ export default defineConfig(({ mode }) => {
     build: {
       target: 'esnext', // Không cần kiểm tra TypeScript
     },
+    optimizeDeps: {
+      include: ['videojs-mobile-ui', 'videojs-contrib-quality-menu'],
+    },
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),

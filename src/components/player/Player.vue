@@ -1,10 +1,16 @@
 <template>
-  <video class="video-js" id="videoPlayer" ref="videoPlayerRef"></video>
+  <video class="video-js vjs-luxmty" id="videoPlayer" ref="videoPlayerRef"></video>
 </template>
 
 <script setup lang="ts">
 import 'videojs-contrib-quality-menu'
-
+import 'videojs-mobile-ui'
+import 'videojs-mobile-ui/dist/videojs-mobile-ui.css';
+import chromecast from "@silvermine/videojs-chromecast";
+import "@silvermine/videojs-chromecast/dist/silvermine-videojs-chromecast.css";
+import 'videojs-landscape-fullscreen'
+import 'videojs-resolution-switcher-v8'
+import '../../assets/vjs-luxmty.min.css'
 interface VideoData {
   playerOptions: {
     autoplay?: boolean
@@ -27,6 +33,7 @@ import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 import { useRoute } from 'vue-router'; // ⬅️ Để lấy slug & episode từ URL
 
+
 const route = useRoute(); // ⬅️ Lấy thông tin URL
 
 
@@ -37,7 +44,7 @@ const props = defineProps<{
 // Lấy slug từ route
 const slug = route.query.path || route.path.split('/').pop();
 const episode = props.videoData.currentEpisode.slug || '1';
-const videoKey = `video-progress-${slug}-ep${episode}`;
+const videoKey = `${slug}-ep${episode}`;
 
 let player;
 const defaultOption = {
@@ -45,16 +52,32 @@ const defaultOption = {
   controls: true,
   fluid: true,
   preload: 'auto',
+  techOrder: ['chromecast', 'html5'], // You may have more Tech, such as Flash or HLS
+  plugins: {
+    chromecast: {
+      addButtonToControlBar: true,
+      preloadWebComponents: true,
+    },
+    videoJsResolutionSwitcher: {
+      default: 'high',
+      dynamicLabel: true
+    }
+  },
   playbackRates: [0.5, 1, 1.5, 2],
   currentTimeDisplay: true,
   enableSmoothSeeking: true,
   controlBar: {
+        children: ['playToggle', 'skipBackward', 'skipForward', 'volumePanel', 'currentTimeDisplay', 'timeDivider', 'durationDisplay', 'progressControl', 'liveDisplay', 'seekToLive', 'remainingTimeDisplay', 'customControlSpacer', 'playbackRateMenuButton', 'chaptersButton', 'descriptionsButton', 'subsCapsButton', 'audioTrackButton', 'ShareButton', 'hlsQualitySelector', 'QualitySelector', 'pictureInPictureToggle', 'fullscreenToggle'],
+    volumePanel: {
+      inline: true,
+    },
+    pictureInPictureToggle: true,
 
+    playbackRateMenuButton: {},
     skipButtons: {
       forward: 10,
       backward: 10
     },
-
   },
   userActions: {
     doubleClick: myDoubleClickHandler,
@@ -109,48 +132,27 @@ function myDoubleClickHandler(event) {
 
 
 const onPlayerReady = () => {
-  console.log(player);
+  player.landscapeFullscreen({
+    fullscreen: {
+      enterOnRotate: true,
+      exitOnRotate: true,
+      alwaysInLandscapeMode: true,
+      iOS: true
+    }
+  })
   player.qualityMenu();
-  let qualityLevels = player.qualityLevels();
-
-  // disable quality levels with less than 720 horizontal lines of resolution when added
-  // to the list.
-  qualityLevels.on('addqualitylevel', function (event) {
-    let qualityLevel = event.qualityLevel;
-
-    if (qualityLevel.height >= 720) {
-      qualityLevel.enabled = true;
-    } else {
-      qualityLevel.enabled = false;
+  player.mobileUi({
+    fullscreen: {
+      enterOnRotate: true,
+      exitOnRotate: true,
+      lockOnRotate: true,
+    },
+    touchControls: {
+      seekSeconds: 10,
+      tapTimeout: 300,
     }
   });
-
-  // example function that will toggle quality levels between SD and HD, defining and HD
-  // quality as having 720 horizontal lines of resolution or more
-  let toggleQuality = (function () {
-    let enable720 = true;
-
-    return function () {
-      for (let qualityLevel of qualityLevels) {
-        if (qualityLevel.height >= 720) {
-          qualityLevel.enabled = enable720;
-        } else {
-          qualityLevel.enabled = !enable720;
-        }
-      }
-      enable720 = !enable720;
-    };
-  })();
-
-  let currentSelectedQualityLevelIndex = qualityLevels.selectedIndex; // -1 if no level selected
-
-  // Listen to change events for when the player selects a new quality level
-  qualityLevels.on('change', function () {
-    console.log('Quality Level changed!');
-    console.log('New level:', qualityLevels[qualityLevels.selectedIndex]);
-  });
-  // player.hlsQualitySelector({ displayCurrentQuality: true });
-  // player.mobileUi();
+  player.chromecast();
 };
 
 function setupPlayer() {
@@ -158,7 +160,7 @@ function setupPlayer() {
     player.dispose(); // clean up the old player
     videoPlayerRef.value?.dispose()
   }
-
+  chromecast(videojs);
   player = videojs(videoPlayerRef.value!, {
     ...defaultOption,
     ...props.videoData.playerOptions
@@ -177,8 +179,14 @@ function storeCurrentPlayingTime() {
   if (initialSource && videoPlayerRef.value?.player) {
     videoPlayerRef.value.player.src(initialSource);
   }
+  const storagekey = "steve-movie"
+  const storageData = localStorage.getItem(storagekey);
+  let storageObj = storageData ? JSON.parse(storageData) : {};
+  if (!storageObj[videoKey]) {
+    storageObj[videoKey] = 0;
+  }
 
-  const savedTime = parseFloat(localStorage.getItem(videoKey) || '0');
+  const savedTime = parseFloat(storageObj[videoKey]);
   player.on('loadedmetadata', () => {
     if (!isNaN(savedTime) && savedTime > 0 && savedTime < player.duration()) {
       player.currentTime(savedTime);
@@ -188,12 +196,24 @@ function storeCurrentPlayingTime() {
 
   player.on('timeupdate', () => {
     const currentTime = player.currentTime();
-    localStorage.setItem(videoKey, currentTime.toString());
+    storageObj[videoKey] = currentTime;
+    localStorage.setItem(storagekey, JSON.stringify(storageObj));
   });
 }
 
-onMounted(() => {
-  setupPlayer();
+onMounted(async () => {
+  if (!document.querySelector('#cast-script')) {
+    const script = document.createElement('script')
+    script.id = 'cast-script'
+    script.src = 'https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1'
+    script.async = true
+    script.onload = () => {
+      setupPlayer()
+    }
+    document.head.appendChild(script)
+  } else {
+    setupPlayer()
+  }
 })
 
 watch(() => episode, (newVal, oldVal) => {

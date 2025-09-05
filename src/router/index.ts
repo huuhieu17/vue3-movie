@@ -1,13 +1,12 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/home/HomeView.vue'
-import { loadLayoutMiddleware } from './middleware'
-import PhimLe from '@/views/list/PhimLe.vue'
+import { getLoadingBarInstance } from '@/utils/loading-bar'
 import PhimBo from '@/views/list/PhimBo.vue'
+import PhimLe from '@/views/list/PhimLe.vue'
 import PhimThuyetMinh from '@/views/list/PhimThuyetMinh.vue'
 import QuocGia from '@/views/list/QuocGia.vue'
 import TheLoai from '@/views/list/TheLoai.vue'
-import { useLoadingBar } from 'naive-ui'
-import { getLoadingBarInstance } from '@/utils/loading-bar'
+import { createRouter, createWebHistory } from 'vue-router'
+import HomeView from '../views/home/HomeView.vue'
+import { loadLayoutMiddleware } from './middleware'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -92,6 +91,7 @@ const router = createRouter({
     },
   ],
 })
+
 
 // Sử dụng loading bar trong hooks
 router.beforeEach((to, from, next) => {
