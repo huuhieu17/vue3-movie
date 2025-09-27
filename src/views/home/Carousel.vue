@@ -22,7 +22,7 @@ const getListData = async () => {
 </script>
 <template>
   <n-space v-if="loading" vertical>
-    <n-skeleton class="relative w-full lg:aspect-[16/7] min-h-[400px] aspect-[1] bg-cover" width="100%" />
+    <n-skeleton class="relative w-full lg:aspect-[video] min-h-screen aspect-[1] bg-cover" width="100%" />
   </n-space>
   <n-carousel :show-dots="false" v-if="!loading" show-arrow keyboard draggable>
     <div v-for="data in listData" :key="data._id"
