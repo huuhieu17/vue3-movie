@@ -141,7 +141,7 @@ watch(currentEpisode, () => {
 <template>
   <div class="mt-16 xl:px-20 px-2 xl:flex block" v-if="movieData && playerOptions && currentEpisode">
     <div class="xl:w-4/5 w-full h-full">
-      <div class="video-player w-full h-full" :key="currentEpisode.slug">
+      <div class="video-player w-full aspect-video " :key="currentEpisode.slug">
         <VideoPlayer :videoData="{
             playerOptions,
             currentEpisode

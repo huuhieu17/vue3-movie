@@ -1,5 +1,5 @@
 <template>
-  <video class="video-js vjs-luxmty" id="videoPlayer" ref="videoPlayerRef"></video>
+  <video class="video-js vjs-luxmty !h-full" id="videoPlayer" ref="videoPlayerRef"></video>
 </template>
 
 <script setup lang="ts">
