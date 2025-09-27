@@ -33,12 +33,12 @@ onMounted(async () => {
       <LazyImage className="!h-full w-full object-cover cover-fade opacity-[0.8]"
         :src="`${appConfig.imageUrl}/uploads/movies/${movieData.item.poster_url}`" :alt="movieData.item.name" />
     </div>
-    <div class="absolute inset-y-[6%] bottom-0 left-0 z-10 h-content w-full">
+    <div class="absolute top-0 bottom-0 left-0 z-10 h-content w-full">
       <!-- Flex Container -->
-      <div class="xl:flex w-full h-full lg:space-x-4 space-x-0 bg-black/70 backdrop-blur-sm">
+      <div class="xl:flex w-full h-full lg:pt-[5%] py-[15%] lg:space-x-4 space-x-0 bg-black/70 backdrop-blur-sm">
         <!-- Left. Information -->
         <div class="xl:w-1/5 flex flex-col items-center w-full gap-1 lg:p-8 p-2">
-          <div class="xl:w-2/3 w-1/4 overflow-hidden relative rounded-lg">
+          <div class="xl:w-2/3 w-1/3 overflow-hidden relative rounded-lg">
             <span class="lazy-load-image-background" style="transition-delay: 0.2s">
               <LazyImage
                 className="h-full w-full object-cover transition-transform duration-300 ease-in-out hover:scale-110"
@@ -72,7 +72,7 @@ onMounted(async () => {
                   <span class="ml-3">Xem ngay</span>
                 </RouterLink>
               </button>
-              <div class="flex lg:flex-row flex-col items-center gap-3 font-bold lg:my-4 my-2 ">
+              <div class="flex lg:flex-row flex-wrap items-center gap-3 font-bold lg:my-4 my-2 ">
                 <div class="text-sm flex items-center space-x-1 pl-0">
                   <span class="font-bold">Quốc gia:</span>
                   <RouterLink class="mx-2" :to="'/quoc-gia?country=' + movieData.item.country[0].slug">
