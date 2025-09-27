@@ -134,3 +134,14 @@ export interface ResponseMovie {
   item: Movie;
 }
 
+export interface Actor {
+  tmdb_people_id: number;
+  adult: boolean;
+  gender: number;
+  gender_name: string;
+  name: string;
+  original_name: string;
+  character: string;
+  known_for_department: string;
+  profile_path: string;
+}

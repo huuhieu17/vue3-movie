@@ -59,7 +59,7 @@ const defaultOption = {
     },
   },
   playbackRates: [0.5, 1, 1.5, 2],
-  currentTimeDisplay: true,
+  currentTimeDisplay: false,
   enableSmoothSeeking: true,
   controlBar: {
         children: ['playToggle', 'skipBackward', 'skipForward', 'volumePanel', 'currentTimeDisplay', 'timeDivider', 'durationDisplay', 'progressControl', 'liveDisplay', 'seekToLive', 'remainingTimeDisplay', 'customControlSpacer', 'playbackRateMenuButton', 'chaptersButton', 'descriptionsButton', 'subsCapsButton', 'audioTrackButton', 'ShareButton', 'hlsQualitySelector', 'QualitySelector', 'pictureInPictureToggle', 'fullscreenToggle'],

@@ -129,8 +129,8 @@ watch([currentPage, country, category, year], () => {
         <n-form-item class="flex-1 w-full" label="Năm">
           <n-select :filterable="true" :clearable="true" v-model:value="year" :options="[
             ...[...Array(15)].map((_, index) => ({
-              label: `Năm ${2024 - index}`,
-              value: 2024 - index
+              label: `Năm ${2025 - index}`,
+              value: 2025 - index
             }))
           ]" placeholder="Chọn năm" />
         </n-form-item>
