@@ -58,11 +58,11 @@ const getListData = async () => {
           </span>
         </div>
         <div class="flex lg:mt-6 mt-4 space-x-4">
-          <button class="lg:w-20 w-12 p-3 aspect-square bg-[#B0E633] rounded-full text-black">
-            <RouterLink :to="`/chi-tiet/${data.slug}`" class="font-bold lg:text-3xl">
+          <RouterLink :to="`/chi-tiet/${data.slug}`" class="font-bold lg:text-3xl">
+            <button class="lg:w-20 w-12 p-3 aspect-square bg-[#B0E633] rounded-full text-black">
               <font-awesome-icon :icon="['fas', 'play']" />
-            </RouterLink>
-          </button>
+            </button>
+          </RouterLink>
         </div>
       </div>
     </div>

@@ -19,6 +19,8 @@ const currentEpisode = ref<any>(null)
 const currentServer = ref<any>(null)
 const episodeRefs = reactive<any[]>([])
 
+const selectedGroup = ref<number>(1)
+
 const playerOptions = ref<any>({})
 
 const playerRef = ref<any>(null)
@@ -96,6 +98,48 @@ const changeServer = (server: any) => {
   updateMetaTitle()
 }
 
+const updateSelectedGroup = () => {
+  if (!currentServer.value?.server_data || !currentEpisode.value) return
+  const index = currentServer.value.server_data.findIndex(
+    (ep: any) => ep.slug === currentEpisode.value.slug
+  )
+  if (index === -1) return
+  // nhóm có 50 tập
+  selectedGroup.value = Math.floor(index / 50) + 1
+}
+
+const playNextEpisode = () => {
+  if (!currentServer.value?.server_data || !currentEpisode.value) return
+  const index = currentServer.value.server_data.findIndex(
+    (ep: any) => ep.slug === currentEpisode.value.slug
+  )
+  if (index === -1 || index === currentServer.value.server_data.length - 1) return
+  const nextEpisode = currentServer.value.server_data[index + 1]
+  playEspisode(nextEpisode.slug)
+}
+
+const playPreviousEpisode = () => {
+  if (!currentServer.value?.server_data || !currentEpisode.value) return
+  const index = currentServer.value.server_data.findIndex(
+    (ep: any) => ep.slug === currentEpisode.value.slug
+  )
+  if (index === -1 || index === 0) return
+  const previousEpisode = currentServer.value.server_data[index - 1]
+  playEspisode(previousEpisode.slug)
+}
+
+watch(currentEpisode, () => {
+  updateSelectedGroup()
+  updateMetaTitle()
+  if (playerRef.value) {
+    playerRef.value.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    })
+  }
+})
+
+
 onMounted(async () => {
   const { data } = await httpClient({
     url: `/v1/api/phim/${slug}`,
@@ -139,49 +183,77 @@ watch(currentEpisode, () => {
 </script>
 
 <template>
-  <div class="mt-16 xl:px-20 px-2 xl:flex block" v-if="movieData && playerOptions && currentEpisode">
-    <div class="xl:w-4/5 w-full h-full">
-      <div class="video-player w-full aspect-video " :key="currentEpisode.slug">
+  <div class="mt-16 xl:px-40 px-2 block" v-if="movieData && playerOptions && currentEpisode">
+    <RouterLink :to="`/chi-tiet/${movieData.item.slug}`">
+      <div class="flex items-center space-x-2 text-white">
+        <font-awesome-icon class="border rounded-full lg:px-3 lg:py-2 px-2 py-1 font-bold"
+          :icon="['fas', 'chevron-left']" />
+        <div class="lg:text-2xl text-lg my-5">{{ movieData.item.name }}</div>
+      </div>
+    </RouterLink>
+    <div class="w-full h-full rounded-sm overflow-hidden">
+      <div class="video-player w-full aspect-video" :key="currentEpisode.slug">
         <VideoPlayer :videoData="{
-            playerOptions,
-            currentEpisode
+          playerOptions,
+          currentEpisode
         }" />
       </div>
     </div>
-    <div class="xl:w-1/5 w-full lg:px-4 xl:mt-0 mt-5">
-      <div class="text-2xl">{{ movieData.item.name }} - Tập {{ currentEpisode.name }}</div>
+    <div class="w-full xl:mt-0 mt-5">
+      <div class="text-lg italic my-5">Bạn đang xem tập {{ currentEpisode.name }}</div>
+      <div>
+        <button class="mr-3 p-3 bg-transparent rounded-2xl text-white border font-bold" @click="playPreviousEpisode">
+          <font-awesome-icon :icon="['fas', 'step-backward']" />
+          <span class="ml-3">Tập trước</span>
+        </button>
+        <button class="p-3 bg-transparent rounded-2xl text-white border font-bold" @click="playNextEpisode">
+          <font-awesome-icon :icon="['fas', 'step-forward']" />
+          <span class="ml-3">Tập tiếp theo</span>
+        </button>
+      </div>
+
       <n-collapse class="mt-4" default-expanded-names="1">
         <div v-if="listServerData?.length > 0" class="mb-4">
           <div class="mb-2">Server</div>
           <div class="w-full flex flex-wrap gap-4">
-            <div
-              :class="currentServer?.server_name === item.server_name ? 'bg-gray-500' : 'bg-gray-900'"
-              class=" px-5 py-2 cursor-pointer" v-for="(item, index) in listServerData"
-              @click="changeServer(item)"
+            <div :class="currentServer?.server_name === item.server_name ? 'bg-gray-500' : 'bg-gray-900'"
+              class=" px-5 py-2 cursor-pointer" v-for="(item, index) in listServerData" @click="changeServer(item)"
               :key="index">
               {{ item.server_name }}
             </div>
           </div>
         </div>
         <n-collapse-item class="font-bold" title="Danh sách tập" name="1">
+          <!-- Thanh cuộn ngang chọn nhóm -->
+          <div v-if="currentServer?.server_data?.length > 50" class="group-scroll mb-3">
+            <button v-for="group in Math.ceil(currentServer.server_data.length / 50)" :key="group"
+              :class="['group-button', selectedGroup === group ? 'active' : '']" @click="selectedGroup = group">
+              {{ (group - 1) * 50 + 1 }}–{{ Math.min(group * 50, currentServer.server_data.length) }}
+            </button>
+          </div>
+
+          <!-- Danh sách tập theo nhóm -->
           <div class="w-full flex flex-wrap gap-4 max-h-[65vh] overflow-y-auto">
-            <div @click="playEspisode(item.slug)" :ref="(el) => updateRefs(el, index)"
-              class="px-5 py-2 cursor-pointer text-sm"
-              :class="currentEpisode.slug == item.slug ? 'bg-gray-500' : 'bg-gray-900'"
-              v-for="(item, index) in currentServer?.server_data" :key="item.name">
-              {{ item.name }}
+            <div v-for="(item, index) in currentServer?.server_data.slice(
+              (selectedGroup - 1) * 50,
+              selectedGroup * 50
+            )" :key="item.name" @click="playEspisode(item.slug)" :ref="(el) => updateRefs(el, index)"
+              class="px-5 py-2 cursor-pointer text-sm episode-item"
+              :class="currentEpisode.slug == item.slug ? 'active' : ''">
+              Tập {{ item.name }}
             </div>
           </div>
         </n-collapse-item>
+
       </n-collapse>
     </div>
   </div>
-  <div class="mt-5 xl:px-20 px-2" v-if="movieData">
+  <div class="mt-5 xl:px-40 px-2" v-if="movieData">
     <div class="text-2xl">{{ movieData.item.name }} - {{ movieData.item.origin_name }}</div>
     <div class="flex mt-2 flex-col gap-2">
       <div>
         <font-awesome-icon :icon="['fas', 'calendar']" class="mr-1" /> <span>Năm sản xuất: </span> {{
-        movieData.item.year }}
+          movieData.item.year }}
       </div>
       <div>
         <font-awesome-icon :icon="['fas', 'clock']" class="mr-1" /> <span>Thời lượng: </span> {{ movieData.item.time }}
@@ -220,7 +292,81 @@ watch(currentEpisode, () => {
     </div>
     <div class="mt-4" v-html="movieData.item.content"></div>
   </div>
-  <div class="mt-5 lg:px-12 px-2">
+  <div class="mt-5 xl:px-32  px-2">
     <NewFilm />
   </div>
 </template>
+
+<style scoped>
+.group-scroll {
+  display: flex;
+  overflow-x: auto;
+  gap: 8px;
+  padding: 6px 0;
+  scrollbar-width: thin;
+  scrollbar-color: #888 transparent;
+}
+
+.group-scroll::-webkit-scrollbar {
+  height: 5px;
+}
+
+.group-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+}
+
+.group-button {
+  flex: 0 0 auto;
+  background: rgba(255, 255, 255, 0.08);
+  color: #b0e633;
+  border: 1px solid rgba(176, 230, 51, 0.3);
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.group-button:hover {
+  background: rgba(176, 230, 51, 0.15);
+}
+
+.group-button.active {
+  background: #b0e633;
+  color: #000;
+  border-color: #b0e633;
+}
+
+.episode-item {
+  background: rgba(17, 24, 39, 0.85);
+  color: #fff;
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.episode-item:hover {
+  background: #b0e633;
+  color: #000;
+  border-color: #b0e633;
+}
+
+.episode-item.active {
+  background: #b0e633;
+  color: #000;
+  border-color: #b0e633;
+}
+
+@media (max-width: 768px) {
+  .episode-item {
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+}
+</style>
