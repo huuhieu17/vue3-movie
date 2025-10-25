@@ -51,7 +51,14 @@ const defaultOption = {
   controls: true,
   fluid: true,
   preload: 'auto',
-  techOrder: ['chromecast', 'html5'], // You may have more Tech, such as Flash or HLS
+  techOrder: [ 'chromecast', 'html5' ], // Required
+  chromecast: {
+    modifyLoadRequestFn: function (loadRequest) { // HLS support
+        loadRequest.media.hlsSegmentFormat = 'fmp4';
+        loadRequest.media.hlsVideoSegmentFormat = 'fmp4';
+        return loadRequest;
+    }
+  },
   plugins: {
     chromecast: {
       addButtonToControlBar: true,
