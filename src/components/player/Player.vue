@@ -38,6 +38,8 @@ const route = useRoute(); // ⬅️ Lấy thông tin URL
 
 const props = defineProps<{
   videoData: VideoData,
+  nextEpisodeCallback?: Function,
+  previousEpisodeCallback?: Function,
 }>()
 
 // Lấy slug từ route
@@ -155,6 +157,12 @@ const onPlayerReady = () => {
     }
   });
   player.chromecast();
+
+  player.on('ended', () => {
+    if (props.nextEpisodeCallback) {
+      props.nextEpisodeCallback();
+    }
+  });
 };
 
 function setupPlayer() {

@@ -196,7 +196,9 @@ watch(currentEpisode, () => {
         <VideoPlayer :videoData="{
           playerOptions,
           currentEpisode
-        }" />
+        }"
+        :next-episode-callback="playNextEpisode"
+        :previous-episode-callback="playPreviousEpisode" />
       </div>
     </div>
     <div class="w-full xl:mt-0 mt-5">
