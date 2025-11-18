@@ -116,7 +116,7 @@
   </div>
   <!-- Drawer Search -->
   <div>
-    <n-drawer v-model:show="drawerSearch" :default-width="state.isMobile ? '100%' : '20%'" resizable>
+    <n-drawer v-model:show="drawerSearch" :default-width="state.isMobile ? '100%' : '40%'" resizable>
       <n-drawer-content title="Tìm kiếm" :closable="true" :native-scrollbar="false">
         <Search />
       </n-drawer-content>

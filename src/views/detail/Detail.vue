@@ -66,7 +66,7 @@ onMounted(() => {
             {{ movieData.item.name }}
           </h1>
           <h2 class="xl:text-md text-md font-bold">{{ movieData.item.origin_name }}</h2>
-          <div class="flex items-center space-x-2 font-bold lg:mt-4 mt-2">
+          <div class="flex flex-wrap items-center space-x-2 font-bold lg:mt-4 mt-2">
             <span class="text-[#fff]rounded bg-[#ffffff10]" v-for="cate in movieData.item.category" :key="cate.id">
               <RouterLink class="mx-2" :to="'/the-loai?category=' + cate.slug">{{ cate.name }}
               </RouterLink>
