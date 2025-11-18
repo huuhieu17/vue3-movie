@@ -36,6 +36,8 @@ const getListData = async () => {
     category: category.value,
     year: year.value
   }
+  console.log(params);
+
   let urlPath;
   switch (props.type) {
     case 'phim-bo':
@@ -99,12 +101,30 @@ const getTitleByType = () => {
   return title
 }
 
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+}
+
 onMounted(() => {
   getListData()
 })
 
+watch(
+  () => route.query,
+  (newVal) => {
+    category.value = newVal.category as string || '';
+    country.value = newVal.country as string || '';
+    year.value = newVal.year ? Number(newVal.year) : null;
+    currentPage.value = newVal.page ? Number(newVal.page) : 1;
+    getListData();
+    scrollToTop()
+  }, { deep: true }
+)
+
 watch([currentPage, country, category, year], () => {
-  getListData(); // Gọi lại hàm khi bất kỳ giá trị nào thay đổi
   updateQuery()
 }, { deep: true });
 </script>
