@@ -100,8 +100,8 @@ const defaultOption = {
 
         case 37: // Left Arrow = Rewind 5 seconds
           event.preventDefault();
-          // player.currentTime(Math.max(0, player.currentTime() - 10));
-          player.dispose()
+          player.currentTime(Math.max(0, player.currentTime() - 10));
+          // player.dispose()
           break;
 
         case 39: // Right Arrow = Forward 5 seconds
