@@ -1,5 +1,5 @@
 import { fileURLToPath, URL } from 'node:url'
-
+import federation from '@originjs/vite-plugin-federation';
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
@@ -9,7 +9,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd())
 
-  const API_URL = `${env.VITE_API_URL ?? 'http://localhost:3000'}`
+  const API_URL = `${env.VITE_API_URL ?? 'http://localhost:4173'}`
   return {
     server: {
       proxy: {
@@ -20,8 +20,22 @@ export default defineConfig(({ mode }) => {
           rewrite: (path) => path.replace(/^v1\/api/, ''),
         },
       },
+      cors: true,
+      port: 4173, // ensure remote runs on 4173
     },
-    plugins: [vue(), vueJsx(), vueDevTools()],
+    plugins: [
+      vue(),
+      vueJsx(),
+      vueDevTools(),
+      federation({
+        name: 'movie_app',
+        filename: 'remoteEntry.js',
+        exposes: {
+          './remote-app': './src/remote-app.ts'
+        },
+        shared: ['vue', 'vue-router'],
+      }),
+    ],
     build: {
       target: 'esnext', // Không cần kiểm tra TypeScript
     },

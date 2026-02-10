@@ -566,6 +566,11 @@
   resolved "https://registry.yarnpkg.com/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.5.0.tgz#3188bcb273a414b0d215fd22a58540b989b9409a"
   integrity sha512-gv3ZRaISU3fjPAgNsriBRqGWQL6quFx04YMPW/zD8XMLsU32mhCCbfbO6KZFLjvYpCZ8zyDEgqsgf+PwPaM7GQ==
 
+"@jridgewell/sourcemap-codec@^1.4.13":
+  version "1.5.5"
+  resolved "https://registry.yarnpkg.com/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.5.5.tgz#6912b00d2c631c0d15ce1a7ab57cd657f2a8f8ba"
+  integrity sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==
+
 "@jridgewell/trace-mapping@^0.3.24", "@jridgewell/trace-mapping@^0.3.25":
   version "0.3.25"
   resolved "https://registry.yarnpkg.com/@jridgewell/trace-mapping/-/trace-mapping-0.3.25.tgz#15f190e98895f3fc23276ee14bc76b675c2e50f0"
@@ -578,6 +583,57 @@
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/@juggle/resize-observer/-/resize-observer-3.4.0.tgz#08d6c5e20cf7e4cc02fd181c4b0c225cd31dbb60"
   integrity sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==
+
+"@module-federation/bridge-react@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@module-federation/bridge-react/-/bridge-react-2.0.0.tgz#98b2f78bbd3792ccc07de95abee92cc0b9ee933b"
+  integrity sha512-TVkIxvlRk5vo4CYuId3Kj2JcyjkhiMq2LwKDcZsXC+8Ohwt8olfKJ6y40rCViXwGUSns1TRBtzPD6EikMXlYZg==
+  dependencies:
+    "@module-federation/bridge-shared" "2.0.0"
+    "@module-federation/sdk" "2.0.0"
+    lru-cache "^10.4.3"
+    react-error-boundary "^4.1.2"
+
+"@module-federation/bridge-shared@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@module-federation/bridge-shared/-/bridge-shared-2.0.0.tgz#1ebff4819ab8dbbd84278268d7107c15642f7dc3"
+  integrity sha512-kid2tyGOjX02da/kjjHtkw035M7NHiD8UGynBfZBi9mznAWUUReT0n8EHyvTIdBpj7S4AQKHpwppPCrg7Rv3ZA==
+
+"@module-federation/bridge-vue3@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@module-federation/bridge-vue3/-/bridge-vue3-2.0.0.tgz#3d6f5a015a3692fd632156fd62a7fb9f1884db21"
+  integrity sha512-85X/Od1cJ3P75X1hWvSB7+vXO5p55tNkHoz3ePTfOI8DGbVPEuQpid37X09HJeS7Umf9PP5g35oosWseQqM7XQ==
+  dependencies:
+    "@module-federation/bridge-shared" "2.0.0"
+    "@module-federation/runtime" "2.0.0"
+    "@module-federation/sdk" "2.0.0"
+
+"@module-federation/error-codes@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@module-federation/error-codes/-/error-codes-2.0.0.tgz#f0963cbba4127969c05310d315c93021387f8b7d"
+  integrity sha512-9oE+hXuPv2zej7AxJ5hOgeRqlPs98meooV2FiutTfftLAyy2N6+Kwmmz5NR9d9t91weJj8N0cSHFoyenNHKTVg==
+
+"@module-federation/runtime-core@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@module-federation/runtime-core/-/runtime-core-2.0.0.tgz#8e201eb7f22dfb54643add30ceba205f1a1fda54"
+  integrity sha512-UhIGUs7Mg+TwMI2lgaLnj4UehpoyXbR7HDb2+vLikgBulPmFtodeWfsxCgENEwKsIY1vS0lOun15lNOn1vo3Xg==
+  dependencies:
+    "@module-federation/error-codes" "2.0.0"
+    "@module-federation/sdk" "2.0.0"
+
+"@module-federation/runtime@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@module-federation/runtime/-/runtime-2.0.0.tgz#a2c5816ad4f21fc36d1bbe4ccb9b453dd1be211a"
+  integrity sha512-vPxQrmQNq3Z1T+1fkHEvFwTdJq9wuCLvdp/lpu9k2Oy7QP/Pj6QoQ/S7J5MCIAoRwj8Wj3z3ma21/DyHwLGvzA==
+  dependencies:
+    "@module-federation/error-codes" "2.0.0"
+    "@module-federation/runtime-core" "2.0.0"
+    "@module-federation/sdk" "2.0.0"
+
+"@module-federation/sdk@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@module-federation/sdk/-/sdk-2.0.0.tgz#e998011baff4059bf66542c47a32fe7557281e99"
+  integrity sha512-JYd1wTulsaoLT7HTk2oXL5y5797Z+H4mzxuUEKnSJo7R34RZSqehsqPSND7n0HT/1nf7uyn0Rb4qBfR3BVvdHQ==
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -599,6 +655,14 @@
   dependencies:
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
+
+"@originjs/vite-plugin-federation@^1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@originjs/vite-plugin-federation/-/vite-plugin-federation-1.4.1.tgz#e6abc8f18f2cf82783eb87853f4d03e6358b43c2"
+  integrity sha512-Uo08jW5pj1t58OUKuZNkmzcfTN2pqeVuAWCCiKf/75/oll4Efq4cHOqSE1FXMlvwZNGDziNdDyBbQ5IANem3CQ==
+  dependencies:
+    estree-walker "^3.0.2"
+    magic-string "^0.27.0"
 
 "@oxlint/darwin-arm64@0.11.1":
   version "0.11.1"
@@ -1777,6 +1841,13 @@ estree-walker@^2.0.2:
   resolved "https://registry.yarnpkg.com/estree-walker/-/estree-walker-2.0.2.tgz#52f010178c2a4c117a7757cfe942adb7d2da4cac"
   integrity sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w==
 
+estree-walker@^3.0.2:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/estree-walker/-/estree-walker-3.0.3.tgz#67c3e549ec402a487b4fc193d1953a524752340d"
+  integrity sha512-7RUKfXgSMMkzt6ZuXmqapOurLGPPfgj6l9uRZ7lRGolvk0y2yocc35LdcxKC5PQZdn2DMqioAQ2NoWcrTKmm6g==
+  dependencies:
+    "@types/estree" "^1.0.0"
+
 esutils@^2.0.2:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/esutils/-/esutils-2.0.3.tgz#74d2eb4de0b8da1293711910d50775b9b710ef64"
@@ -2272,7 +2343,7 @@ lodash@^4.17.21:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
-lru-cache@^10.2.0:
+lru-cache@^10.2.0, lru-cache@^10.4.3:
   version "10.4.3"
   resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-10.4.3.tgz#410fc8a17b70e598013df257c2446b7f3383f119"
   integrity sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==
@@ -2292,6 +2363,13 @@ m3u8-parser@^7.2.0:
     "@babel/runtime" "^7.12.5"
     "@videojs/vhs-utils" "^4.1.1"
     global "^4.4.0"
+
+magic-string@^0.27.0:
+  version "0.27.0"
+  resolved "https://registry.yarnpkg.com/magic-string/-/magic-string-0.27.0.tgz#e4a3413b4bab6d98d2becffd48b4a257effdbbf3"
+  integrity sha512-8UnnX2PeRAPZuN12svgR9j7M1uWMovg/CEnIwIG0LFkXSJJe4PdfUGiTGl8V9bsBHFUtfVINcSyYxd7q+kx9fA==
+  dependencies:
+    "@jridgewell/sourcemap-codec" "^1.4.13"
 
 magic-string@^0.30.11, magic-string@^0.30.4:
   version "0.30.14"
@@ -2753,6 +2831,13 @@ queue-microtask@^1.2.2:
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/queue-microtask/-/queue-microtask-1.2.3.tgz#4929228bbc724dfac43e0efb058caf7b6cfb6243"
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
+
+react-error-boundary@^4.1.2:
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/react-error-boundary/-/react-error-boundary-4.1.2.tgz#bc750ad962edb8b135d6ae922c046051eb58f289"
+  integrity sha512-GQDxZ5Jd+Aq/qUxbCm1UtzmL/s++V7zKgE8yMktJiCQXCCFZnMZh9ng+6/Ne6PjNSXH0L9CjeOEREfRnq6Duag==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
 
 read-cache@^1.0.0:
   version "1.0.0"

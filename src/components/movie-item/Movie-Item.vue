@@ -9,9 +9,9 @@ defineProps({
 })
 </script>
 <template>
-  <a
+  <RouterLink
     class="relative overflow-hidden flex flex-col rounded-lg bg-layout shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl max-h-[340px]"
-    :href="'/chi-tiet/'+ data.slug"
+    :to="'/chi-tiet/'+ data.slug"
   >
     <div class="aspect-[2/3] overflow-hidden">
       <span class="lazy-load-image-background" style="transition-delay: 0.2s"
@@ -44,5 +44,5 @@ defineProps({
         ></span
       ></span>
     </div>
-  </a>
+  </RouterLink>
 </template>
