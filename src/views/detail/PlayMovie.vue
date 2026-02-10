@@ -183,7 +183,7 @@ watch(currentEpisode, () => {
 </script>
 
 <template>
-  <div class="mt-16 xl:px-40 px-2 block" v-if="movieData && playerOptions && currentEpisode">
+  <div class="pt-16 xl:px-40 px-2 block" v-if="movieData && playerOptions && currentEpisode">
     <RouterLink :to="`/chi-tiet/${movieData.item.slug}`">
       <div class="flex items-center space-x-2 text-white">
         <font-awesome-icon class="border rounded-full lg:px-3 lg:py-2 px-2 py-1 font-bold"

@@ -129,7 +129,7 @@ watch([currentPage, country, category, year], () => {
 }, { deep: true });
 </script>
 <template>
-  <div class="mt-20 lg:px-8 px-4 lg:py-6 py-2">
+  <div class="lg:px-8 px-4 lg:py-20 py-20">
     <div class="filter-container">
       <n-space class="flex lg:flex-row flex-col items-center gap-5" vertical>
 
