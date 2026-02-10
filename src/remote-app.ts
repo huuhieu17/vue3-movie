@@ -6,10 +6,19 @@ import { createApp } from 'vue';
 import { createMetaManager } from 'vue-meta';
 import App from './App.vue';
 
+import { config as faConfig, library } from '@fortawesome/fontawesome-svg-core';
+import '@fortawesome/fontawesome-svg-core/styles.css'; // ensure css is loaded once
+import { fas } from '@fortawesome/free-solid-svg-icons';
 import { createMemoryHistory, createWebHistory } from 'vue-router';
+import './remote-styles';
 import router from './router';
 import httpClient from './utils/httpClient';
-import './remote-styles'
+
+// disable auto injection (we load styles.css manually)
+faConfig.autoAddCss = false;
+
+// add icon packs you need
+library.add(fas);
 let app
 export function mount(el, props = {} as any) {
   const {apiBaseUrl} = props;
