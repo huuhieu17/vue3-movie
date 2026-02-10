@@ -9,7 +9,7 @@ import App from './App.vue';
 import { createMemoryHistory, createWebHistory } from 'vue-router';
 import router from './router';
 import httpClient from './utils/httpClient';
-
+import './remote-styles'
 let app
 export function mount(el, props = {} as any) {
   const {apiBaseUrl} = props;
