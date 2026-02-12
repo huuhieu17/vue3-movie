@@ -1,5 +1,5 @@
 <template>
-  <div class="movie-remote">
+  <div class="movie-remote bg-black min-h-screen text-white">
     <metainfo>
       <template v-slot:title="{ content }">{{ content }} - Yay!</template>
     </metainfo>
@@ -55,7 +55,7 @@
     </header>
     <SplashScreen v-if="isAppLoading" />
     <div>
-      <n-drawer v-model:show="activeDrawer" placement="left">
+     <n-drawer v-model:show="activeDrawer" placement="left" v-on:hide="activeDrawer  = false" :teleported="false">
         <n-drawer-content title="">
           <nav class="space-y-6 flex flex-col">
             <RouterLink to="/" @click="activeDrawer = false" class="block text-gray-300 font-bold hover:text-white">
@@ -101,11 +101,12 @@
             </RouterLink>
           </nav>
         </n-drawer-content>
-      </n-drawer>
+     </n-drawer>
     </div>
     <!-- Drawer Search -->
     <div>
-      <n-drawer v-model:show="drawerSearch" :default-width="state.isMobile ? '100%' : '40%'" resizable>
+      <n-drawer v-model:show="drawerSearch" v-on:hide="drawerSearch = false" :default-width="state.isMobile ? '100%' : '40%'" resizable
+        :teleported="false">
         <n-drawer-content title="Tìm kiếm" :closable="true" :native-scrollbar="false">
           <Search />
         </n-drawer-content>
@@ -161,6 +162,14 @@ export default {
       state.isMobile = window.matchMedia('(max-width: 768px)').matches
     }
 
+    const tempFixCss = () => {
+      const body = document.querySelector('body');
+
+      if (body) {
+        body.classList.add('movie-container')
+      }
+    }
+
     useMeta({
       title: 'Steve Movie',
       htmlAttrs: {
@@ -172,7 +181,7 @@ export default {
     onMounted(() => {
       categoriesStore.fetchCategories()
       countriesStore.fetchCountries()
-
+      tempFixCss()
       checkDevice()
       window.addEventListener('resize', checkDevice)
     })

@@ -14,9 +14,9 @@ onMounted(() => {
 <template>
   <n-config-provider :theme="darkTheme">
     <n-loading-bar-provider>
-      <Layout>
-        <RouterView />
-      </Layout>
+        <Layout>
+          <RouterView />
+        </Layout>
     </n-loading-bar-provider>
 
   </n-config-provider>

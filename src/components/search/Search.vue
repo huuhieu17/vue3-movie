@@ -4,6 +4,7 @@
       class="w-full mb-5 bg-transparent border border-[#414040] outline-none rounded p-2"
       @input="handleInput"
       type="text"
+      name="search"
       placeholder="Nhập từ khoá tìm kiếm..."
     />
 
