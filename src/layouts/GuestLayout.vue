@@ -8,6 +8,9 @@
       isScrolled ? 'bg-black' : 'bg-transparent',
     ]" class="flex items-center justify-between lg:px-8 px-4 py-4">
       <div class="flex items-center lg:gap-[50px] gap-[10px]">
+        <button class="block sm:hidden text-2xl" @click="activateDrawer()">
+          <font-awesome-icon class="text-gray-300" :icon="['fas', 'bars']" />
+        </button>
         <div class="lg:text-2xl text-xl font-bold text-white">
           <RouterLink to="/">Steve Movie</RouterLink>
         </div>
@@ -48,9 +51,6 @@
       <div class="flex items-center space-x-4">
         <font-awesome-icon class="text-gray-300 text-xl" @click="drawerSearch = !drawerSearch"
           :icon="['fas', 'search']" />
-        <button class="block sm:hidden text-2xl" @click="activateDrawer()">
-          <font-awesome-icon class="text-gray-300" :icon="['fas', 'bars']" />
-        </button>
       </div>
     </header>
     <SplashScreen v-if="isAppLoading" />

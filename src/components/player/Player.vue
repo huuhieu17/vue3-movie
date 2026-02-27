@@ -6,8 +6,6 @@
 import 'videojs-contrib-quality-menu'
 import 'videojs-mobile-ui'
 import 'videojs-mobile-ui/dist/videojs-mobile-ui.css';
-import chromecast from "@silvermine/videojs-chromecast";
-import "@silvermine/videojs-chromecast/dist/silvermine-videojs-chromecast.css";
 import 'videojs-landscape-fullscreen'
 import '../../assets/vjs-luxmty.min.css'
 interface VideoData {
@@ -53,19 +51,8 @@ const defaultOption = {
   controls: true,
   fluid: true,
   preload: 'auto',
-  techOrder: [ 'chromecast', 'html5' ], // Required
-  chromecast: {
-    modifyLoadRequestFn: function (loadRequest) { // HLS support
-        loadRequest.media.hlsSegmentFormat = 'fmp4';
-        loadRequest.media.hlsVideoSegmentFormat = 'fmp4';
-        return loadRequest;
-    }
-  },
+  techOrder: [ 'html5' ], // Required
   plugins: {
-    chromecast: {
-      addButtonToControlBar: true,
-      preloadWebComponents: true,
-    },
   },
   playbackRates: [0.5, 1, 1.5, 2],
   currentTimeDisplay: false,
@@ -156,7 +143,6 @@ const onPlayerReady = () => {
       tapTimeout: 300,
     }
   });
-  player.chromecast();
 
   player.on('ended', () => {
     if (props.nextEpisodeCallback) {
@@ -170,7 +156,6 @@ function setupPlayer() {
     player.dispose(); // clean up the old player
     videoPlayerRef.value?.dispose()
   }
-  chromecast(videojs);
   player = videojs(videoPlayerRef.value!, {
     ...defaultOption,
     ...props.videoData.playerOptions

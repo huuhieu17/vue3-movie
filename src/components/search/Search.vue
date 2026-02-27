@@ -9,10 +9,10 @@
     />
 
       <div v-for="item of listSearchData" :key="item._id" class="mb-5 border border-[#414040] rounded-lg cursor-pointer overflow-hidden">
-        <RouterLink :to="'/chi-tiet/'+ item.slug" :key="item._id" >
+        <a :href="'/chi-tiet/'+ item.slug" :key="item._id" >
         <img class="hover:scale-105" :src="`${appConfig.imageUrl}/uploads/movies/${item.poster_url}`" :alt="item.name"/>
         <div class="font-bold my-2 p-2">{{item.name}} - ({{item.origin_name}})</div>
-        </RouterLink>
+        </a>
       </div>
 
 
@@ -23,8 +23,16 @@ import { ref } from 'vue'
 import httpClient from '@/utils/httpClient.ts'
 import { appConfig } from '@/utils/config.ts'
 
+interface SearchResultItem {
+  _id: string
+  name: string
+  origin_name: string
+  slug: string
+  poster_url: string
+}
+
 let debounceTimer: NodeJS.Timeout
-const listSearchData = ref([])
+const listSearchData = ref<SearchResultItem[]>([])
 
 const handleInput = (event: Event) => {
   const target = event.target as HTMLInputElement
