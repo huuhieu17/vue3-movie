@@ -114,15 +114,23 @@
     </div>
     <slot></slot>
     <footer class="mx-auto mt-32 w-full max-w-container px-4 sm:px-6 lg:px-8" aria-labelledby="footer-heading">
-      <div class="items-centers grid grid-cols-1 justify-between gap-4 border-t border-gray-900 py-6 md:grid-cols-2">
+      <div class="items-centers grid grid-cols-1 justify-between gap-4 border-t border-gray-900 py-6 md:grid-cols-3">
         <p class="text-sm/6 text-gray-600 max-md:text-center">
           ©
           <!-- -->2024
           <!-- -->
           Steve
         </p>
-        <div class="flex items-center justify-center space-x-4 text-sm/6 text-gray-500 md:justify-end">
+        <div class="flex items-center justify-center space-x-4 text-sm/6 text-gray-500">
           <p>Đây chỉ là dự án thử nghiệm</p>
+        </div>
+        <div class="flex items-center justify-center space-x-4 text-sm/6 md:justify-end max-md:text-center">
+          <span class="text-gray-500">Liên hệ vấn đề:</span>
+          <a href="https://fb.com/huuhieu2001" target="_blank" rel="noopener noreferrer"
+            class="text-[#b0e633] hover:text-[#c0f63d] font-semibold transition-colors duration-200 flex items-center space-x-1">
+            <font-awesome-icon :icon="['fab', 'facebook']" />
+            <span>fb.com/huuhieu2001</span>
+          </a>
         </div>
       </div>
     </footer>

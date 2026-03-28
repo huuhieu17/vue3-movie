@@ -10,6 +10,9 @@ import { loadLayoutMiddleware } from './middleware'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  scrollBehavior(to, from, savedPosition) {
+      return { left: 0, top: 0 }
+  },
   routes: [
     {
       path: '/',

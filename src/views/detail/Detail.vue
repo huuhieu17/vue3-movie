@@ -4,7 +4,7 @@ import type { Actor, ResponseMovie } from '@/interfaces/home.ts'
 import { appConfig } from '@/utils/config.ts'
 import httpClient from '@/utils/httpClient.ts'
 import { NTabPane, NTabs } from 'naive-ui'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -13,6 +13,7 @@ const slug = route.params.slug
 const movieData = ref<ResponseMovie | null>(null)
 const actors = ref<Actor[] | null>([])
 const selectedGroup = ref<Record<number, number>>({})
+const currentEpisode = computed(() => route.query.episode as string | undefined)
 
 onMounted(async () => {
   const { data } = await httpClient({
@@ -38,6 +39,7 @@ onMounted(() => {
 })
 </script>
 <template>
+  <div class="min-h-screen w-full" v-if="!movieData"></div>
   <div class="min-h-screen w-full relative" v-if="movieData">
     <div class="absolute top-0 left-0 w-full h-screen z-1">
       <LazyImage className="!h-full w-full object-cover cover-fade opacity-[0.8]"
@@ -62,12 +64,12 @@ onMounted(() => {
                   class="absolute inset-0 rounded-tl-md rounded-br-md rounded-tr bg-gradient-to-r from-pink-500 to-purple-700 opacity-50 blur"></span></span>
             </div>
           </div>
-          <h1 class="xl:text-2xl text-xl font-bold text-[#B0E633]">
+          <h1 class="xl:text-2xl text-xl text-center font-bold text-[#B0E633]">
             {{ movieData.item.name }}
           </h1>
           <h2 class="xl:text-md text-md font-bold">{{ movieData.item.origin_name }}</h2>
           <div class="flex flex-wrap items-center space-x-2 font-bold lg:mt-4 mt-2">
-            <span class="text-[#fff]rounded bg-[#ffffff10]" v-for="cate in movieData.item.category" :key="cate.id">
+            <span class="text-[#fff] rounded bg-[#ffffff10]" v-for="cate in movieData.item.category" :key="cate.id">
               <RouterLink class="mx-2" :to="'/the-loai?category=' + cate.slug">{{ cate.name }}
               </RouterLink>
             </span>
@@ -142,7 +144,7 @@ onMounted(() => {
                         <RouterLink v-for="(_data, _index) in data.server_data.slice(
                           (selectedGroup[index] - 1) * 50,
                           selectedGroup[index] * 50
-                        )" :key="_index" :to="`/play/${movieData.item.slug}?episode=${_data.slug}`" class="episode-item">
+                        )" :key="_index" :to="`/play/${movieData.item.slug}?episode=${_data.slug}`" :class="['episode-item', { active: currentEpisode === _data.slug }]">
                           Tập {{ _data.name }}
                         </RouterLink>
                       </div>
@@ -178,9 +180,9 @@ onMounted(() => {
   display: flex;
   overflow-x: auto;
   gap: 8px;
-  padding: 6px 0;
+  padding: 8px 0;
   scrollbar-width: thin;
-  scrollbar-color: #888 transparent;
+  scrollbar-color: rgba(176, 230, 51, 0.6) transparent;
 }
 
 .group-scroll::-webkit-scrollbar {
@@ -188,8 +190,12 @@ onMounted(() => {
 }
 
 .group-scroll::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(176, 230, 51, 0.6);
   border-radius: 4px;
+}
+
+.group-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(176, 230, 51, 0.8);
 }
 
 .group-button {
@@ -231,13 +237,21 @@ onMounted(() => {
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  border: 1px solid transparent;
+  border: 1px solid rgba(176, 230, 51, 0.3);
 }
 
 .episode-item:hover {
   background: #b0e633;
   color: #000;
   border-color: #b0e633;
+  transform: translateY(-2px);
+}
+
+.episode-item.active {
+  background: #b0e633;
+  color: #000;
+  border-color: #b0e633;
+  font-weight: 600;
 }
 
 @media (max-width: 768px) {

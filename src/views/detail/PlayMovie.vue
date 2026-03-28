@@ -183,7 +183,8 @@ watch(currentEpisode, () => {
 </script>
 
 <template>
-  <div class="pt-16 xl:px-40 px-2 block bg-black" v-if="movieData && playerOptions && currentEpisode">
+  <div class="min-h-screen w-full"  v-if="!movieData"></div>
+  <div class="pt-16 xl:px-24 px-2 block bg-black" v-if="movieData && playerOptions && currentEpisode">
     <RouterLink :to="`/chi-tiet/${movieData.item.slug}`">
       <div class="flex items-center space-x-2 text-white">
         <font-awesome-icon class="border rounded-full lg:px-3 lg:py-2 px-2 py-1 font-bold"
@@ -250,7 +251,7 @@ watch(currentEpisode, () => {
       </n-collapse>
     </div>
   </div>
-  <div class="mt-5 xl:px-40 px-2" v-if="movieData">
+  <div class="mt-5 xl:px-24 px-2" v-if="movieData">
     <div class="text-2xl">{{ movieData.item.name }} - {{ movieData.item.origin_name }}</div>
     <div class="flex mt-2 flex-col gap-2">
       <div>
@@ -294,7 +295,7 @@ watch(currentEpisode, () => {
     </div>
     <div class="mt-4" v-html="movieData.item.content"></div>
   </div>
-  <div class="mt-5 xl:px-32  px-2">
+  <div class="mt-5 xl:px-16  px-2">
     <NewFilm />
   </div>
 </template>

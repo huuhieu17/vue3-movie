@@ -1,13 +1,42 @@
 <template>
-  <video class="video-js vjs-luxmty !h-full" id="videoPlayer" ref="videoPlayerRef"></video>
+  <video-player id="videoPlayer">
+    <video-minimal-skin class="!h-full">
+      <video
+        ref="videoPlayerRef"
+        class="!h-full w-full"
+        playsinline
+        preload="auto"
+        :controls="false"
+        :autoplay="props.videoData.playerOptions.autoplay ?? true"
+        :muted="props.videoData.playerOptions.muted ?? false"
+        :poster="props.videoData.playerOptions.poster"
+        @loadedmetadata="restorePlaybackPosition"
+        @timeupdate="persistPlaybackPosition"
+        @ended="handleEnded"
+      >
+        <source
+          v-if="activeSource?.src"
+          :src="activeSource.src"
+          :type="activeSource.type || 'application/x-mpegURL'"
+        />
+      </video>
+    </video-minimal-skin>
+  </video-player>
 </template>
 
 <script setup lang="ts">
-import 'videojs-contrib-quality-menu'
-import 'videojs-mobile-ui'
-import 'videojs-mobile-ui/dist/videojs-mobile-ui.css';
-import 'videojs-landscape-fullscreen'
-import '../../assets/vjs-luxmty.min.css'
+import '@videojs/html/video/player';
+import '@videojs/html/video/minimal-skin';
+
+type ScreenOrientationWithLock = ScreenOrientation & {
+  lock?: (orientation: any) => Promise<void>
+  unlock?: () => void
+}
+
+type WebkitVideoElement = HTMLVideoElement & {
+  webkitEnterFullscreen?: () => void
+}
+
 interface VideoData {
   playerOptions: {
     autoplay?: boolean
@@ -25,14 +54,8 @@ interface VideoData {
   currentEpisode: any
 }
 
-import videojs from 'video.js'
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
-
-import { useRoute } from 'vue-router'; // ⬅️ Để lấy slug & episode từ URL
-
-
-const route = useRoute(); // ⬅️ Lấy thông tin URL
-
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 
 const props = defineProps<{
   videoData: VideoData,
@@ -40,186 +63,197 @@ const props = defineProps<{
   previousEpisodeCallback?: Function,
 }>()
 
-// Lấy slug từ route
-const slug = route.query.path || route.path.split('/').pop();
-const episode = props.videoData.currentEpisode.slug || '1';
-const videoKey = `${slug}-ep${episode}`;
+const route = useRoute()
+const storageKey = 'steve-movie'
+const videoPlayerRef = ref<HTMLVideoElement | null>(null)
 
-let player;
-const defaultOption = {
-  autoplay: true,
-  controls: true,
-  fluid: true,
-  preload: 'auto',
-  techOrder: [ 'html5' ], // Required
-  plugins: {
-  },
-  playbackRates: [0.5, 1, 1.5, 2],
-  currentTimeDisplay: false,
-  enableSmoothSeeking: true,
-  controlBar: {
-        children: ['playToggle', 'skipBackward', 'skipForward', 'volumePanel', 'currentTimeDisplay', 'timeDivider', 'durationDisplay', 'progressControl', 'liveDisplay', 'seekToLive', 'remainingTimeDisplay', 'customControlSpacer', 'playbackRateMenuButton', 'chaptersButton', 'descriptionsButton', 'subsCapsButton', 'audioTrackButton', 'ShareButton', 'hlsQualitySelector', 'QualitySelector', 'pictureInPictureToggle', 'fullscreenToggle'],
-    volumePanel: {
-      inline: true,
-    },
-    pictureInPictureToggle: true,
+const routeSlug = computed(() => String(route.query.path || route.path.split('/').pop() || 'movie'))
+const episodeSlug = computed(() => String(props.videoData.currentEpisode?.slug || '1'))
+const activeSource = computed(() => props.videoData.playerOptions.sources?.[0])
+const videoKey = computed(() => `${routeSlug.value}-ep${episodeSlug.value}`)
 
-    playbackRateMenuButton: {},
-    skipButtons: {
-      forward: 10,
-      backward: 10
-    },
-  },
-  userActions: {
-    doubleClick: myDoubleClickHandler,
-    hotkeys: function (event) {
-      // `this` is the player in this context
-
-      switch (event.which) {
-        case 32: // Space = Toggle Play/Pause
-          event.preventDefault(); // Prevent page scroll
-          if (player.paused()) {
-            player.play();
-          } else {
-            player.pause();
-          }
-          break;
-
-        case 37: // Left Arrow = Rewind 5 seconds
-          event.preventDefault();
-          player.currentTime(Math.max(0, player.currentTime() - 10));
-          // player.dispose()
-          break;
-
-        case 39: // Right Arrow = Forward 5 seconds
-          event.preventDefault();
-          player.currentTime(Math.min(player.duration(), player.currentTime() + 10));
-          break;
-
-        case 77: // M = Mute/Unmute
-          player.muted(!player.muted());
-          break;
-
-        case 70: // F = Fullscreen toggle
-          if (player.isFullscreen()) {
-            player.exitFullscreen();
-          } else {
-            player.requestFullscreen();
-          }
-          break;
-      }
-    }
-  },
-  language: 'vi'
-}
-// Refs
-const videoPlayerRef = ref<any>(null)
-
-function myDoubleClickHandler(event) {
-  // `this` is the player in this context
-
-  videoPlayerRef.value?.pause()
-};
-
-
-const onPlayerReady = () => {
-  player.landscapeFullscreen({
-    fullscreen: {
-      enterOnRotate: true,
-      exitOnRotate: true,
-      alwaysInLandscapeMode: true,
-      iOS: true
-    }
-  })
-  player.qualityMenu();
-  player.mobileUi({
-    fullscreen: {
-      enterOnRotate: true,
-      exitOnRotate: true,
-      lockOnRotate: true,
-    },
-    touchControls: {
-      seekSeconds: 10,
-      tapTimeout: 300,
-    }
-  });
-
-  player.on('ended', () => {
-    if (props.nextEpisodeCallback) {
-      props.nextEpisodeCallback();
-    }
-  });
-};
-
-function setupPlayer() {
-  if (player) {
-    player.dispose(); // clean up the old player
-    videoPlayerRef.value?.dispose()
+const getStorage = () => {
+  try {
+    return JSON.parse(localStorage.getItem(storageKey) || '{}')
+  } catch {
+    return {}
   }
-  player = videojs(videoPlayerRef.value!, {
-    ...defaultOption,
-    ...props.videoData.playerOptions
-  }, onPlayerReady);
-
-  if (player && player.pause()) {
-    player.play()
-  }
-
-  storeCurrentPlayingTime();
 }
 
-function storeCurrentPlayingTime() {
-  const initialSource = props.videoData.playerOptions.sources?.[0];
+const restorePlaybackPosition = () => {
+  const video = videoPlayerRef.value
+  if (!video) return
 
-  if (initialSource && videoPlayerRef.value?.player) {
-    videoPlayerRef.value.player.src(initialSource);
-  }
-  const storagekey = "steve-movie"
-  const storageData = localStorage.getItem(storagekey);
-  let storageObj = storageData ? JSON.parse(storageData) : {};
-  if (!storageObj[videoKey]) {
-    storageObj[videoKey] = 0;
+  const storageObj = getStorage()
+  const savedTime = Number(storageObj[videoKey.value] || 0)
+
+  if (!Number.isNaN(savedTime) && savedTime > 0 && savedTime < video.duration) {
+    video.currentTime = savedTime
   }
 
-  const savedTime = parseFloat(storageObj[videoKey]);
-  player.on('loadedmetadata', () => {
-    if (!isNaN(savedTime) && savedTime > 0 && savedTime < player.duration()) {
-      player.currentTime(savedTime);
-      player.play();
-    }
-  });
-
-  player.on('timeupdate', () => {
-    const currentTime = player.currentTime();
-    storageObj[videoKey] = currentTime;
-    localStorage.setItem(storagekey, JSON.stringify(storageObj));
-  });
+  if (props.videoData.playerOptions.autoplay ?? true) {
+    void video.play().catch(() => {})
+  }
 }
 
-onMounted(async () => {
-  if (!document.querySelector('#cast-script')) {
-    const script = document.createElement('script')
-    script.id = 'cast-script'
-    script.src = 'https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1'
-    script.async = true
-    script.onload = () => {
-      setupPlayer()
-    }
-    document.head.appendChild(script)
-  } else {
-    setupPlayer()
+const persistPlaybackPosition = () => {
+  const video = videoPlayerRef.value
+  if (!video) return
+
+  const storageObj = getStorage()
+  storageObj[videoKey.value] = video.currentTime || 0
+  localStorage.setItem(storageKey, JSON.stringify(storageObj))
+}
+
+const handleEnded = () => {
+  props.nextEpisodeCallback?.()
+}
+
+const isMobileDevice = () =>
+  typeof window !== 'undefined' && window.matchMedia('(hover: none) and (pointer: coarse)').matches
+
+const tryLockLandscape = async () => {
+  if (!isMobileDevice()) return
+
+  const orientation = screen.orientation as ScreenOrientationWithLock | undefined
+  if (!orientation || typeof orientation.lock !== 'function') return
+
+  await orientation.lock('landscape').catch(() => {})
+}
+
+const unlockOrientation = () => {
+  const orientation = screen.orientation as ScreenOrientationWithLock | undefined
+  orientation?.unlock?.()
+}
+
+const isFullscreenActive = () => {
+  const doc = document as Document & { webkitFullscreenElement?: Element | null }
+  return Boolean(doc.fullscreenElement || doc.webkitFullscreenElement)
+}
+
+const handleFullscreenChange = () => {
+  if (isFullscreenActive()) {
+    void tryLockLandscape()
+    return
   }
+
+  unlockOrientation()
+}
+
+const handleWebkitBeginFullscreen = () => {
+  void tryLockLandscape()
+}
+
+const handleWebkitEndFullscreen = () => {
+  unlockOrientation()
+}
+
+const toggleFullscreen = () => {
+  const video = videoPlayerRef.value as WebkitVideoElement | null
+  if (!video) return
+
+  const doc = document as Document & {
+    webkitFullscreenElement?: Element | null
+    webkitExitFullscreen?: () => Promise<void> | void
+  }
+
+  const currentFullscreenEl = doc.fullscreenElement || doc.webkitFullscreenElement
+  if (currentFullscreenEl) {
+    if (document.fullscreenElement && document.exitFullscreen) {
+      void document.exitFullscreen().catch(() => {})
+      return
+    }
+
+    if (typeof doc.webkitExitFullscreen === 'function') {
+      void Promise.resolve(doc.webkitExitFullscreen()).catch(() => {})
+    }
+    return
+  }
+
+  if (video.requestFullscreen) {
+    void video.requestFullscreen().catch(() => {})
+    return
+  }
+
+  if (typeof video.webkitEnterFullscreen === 'function') {
+    video.webkitEnterFullscreen()
+  }
+}
+
+const handlePlayerHotkeys = (event: KeyboardEvent) => {
+  const video = videoPlayerRef.value
+  if (!video) return
+
+  const target = event.target as HTMLElement | null
+  if (target && (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))) {
+    return
+  }
+
+  if (event.code === 'Space') {
+    event.preventDefault()
+    if (video.paused) {
+      void video.play().catch(() => {})
+    } else {
+      video.pause()
+    }
+    return
+  }
+
+  if (event.code === 'ArrowLeft') {
+    event.preventDefault()
+    video.currentTime = Math.max(0, video.currentTime - 10)
+    return
+  }
+
+  if (event.code === 'ArrowRight') {
+    event.preventDefault()
+    const duration = Number.isFinite(video.duration) ? video.duration : Number.MAX_SAFE_INTEGER
+    video.currentTime = Math.min(duration, video.currentTime + 10)
+    return
+  }
+
+  if (event.code === 'KeyF') {
+    event.preventDefault()
+    toggleFullscreen()
+  }
+}
+
+watch(
+  () => activeSource.value?.src,
+  async (newSrc, oldSrc) => {
+    if (!newSrc || newSrc === oldSrc || !videoPlayerRef.value) return
+
+    await nextTick()
+    videoPlayerRef.value.load()
+    if (props.videoData.playerOptions.autoplay ?? true) {
+      void videoPlayerRef.value.play().catch(() => {})
+    }
+  },
+  { immediate: true },
+)
+
+onMounted(() => {
+  document.addEventListener('fullscreenchange', handleFullscreenChange)
+  document.addEventListener('webkitfullscreenchange', handleFullscreenChange as EventListener)
+  window.addEventListener('keydown', handlePlayerHotkeys)
+
+  const video = videoPlayerRef.value
+  if (!video) return
+
+  video.addEventListener('webkitbeginfullscreen', handleWebkitBeginFullscreen as EventListener)
+  video.addEventListener('webkitendfullscreen', handleWebkitEndFullscreen as EventListener)
 })
 
-watch(() => episode, (newVal, oldVal) => {
-  if (newVal !== oldVal) {
-    player && player.dispose()
-    setupPlayer(); // reinitialize when episode changes
-  }
-});
-
 onBeforeUnmount(() => {
-  videoPlayerRef.value?.dispose?.()
+  document.removeEventListener('fullscreenchange', handleFullscreenChange)
+  document.removeEventListener('webkitfullscreenchange', handleFullscreenChange as EventListener)
+  window.removeEventListener('keydown', handlePlayerHotkeys)
+
+  const video = videoPlayerRef.value
+  if (!video) return
+
+  video.removeEventListener('webkitbeginfullscreen', handleWebkitBeginFullscreen as EventListener)
+  video.removeEventListener('webkitendfullscreen', handleWebkitEndFullscreen as EventListener)
 })
 
 
