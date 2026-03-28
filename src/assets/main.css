@@ -27,29 +27,49 @@ body {
 
 /* Toàn bộ thanh cuộn */
 ::-webkit-scrollbar {
-    width: 8px;
+    width: 10px;
     /* Độ rộng thanh dọc */
-    height: 8px;
+    height: 10px;
     /* Độ cao thanh ngang */
 }
 
 /* Track (nền của thanh cuộn) */
 ::-webkit-scrollbar-track {
-    background: #f4f4f4;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-track:hover {
+    background: rgba(255, 255, 255, 0.08);
 }
 
 /* Thumb (phần trượt) */
 ::-webkit-scrollbar-thumb {
-    background: #888;
+    background: linear-gradient(180deg, #b0e633 0%, #a0d620 100%);
+    border-radius: 10px;
+    border: 2px solid rgba(176, 230, 51, 0.3);
+    box-shadow: 0 0 8px rgba(176, 230, 51, 0.3);
 }
 
 /* Thumb khi hover */
 ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: linear-gradient(180deg, #c0f63d 0%, #b0e633 100%);
+    box-shadow: 0 0 12px rgba(176, 230, 51, 0.5);
+    border-color: rgba(176, 230, 51, 0.6);
+}
+
+/* Firefox scrollbar */
+* {
+    scrollbar-color: #b0e633 rgba(255, 255, 255, 0.05);
+    scrollbar-width: thin;
 }
 
 @media (max-width: 768px) {
     ::-webkit-scrollbar {
         display: none;
+    }
+    
+    * {
+        scrollbar-width: none;
     }
 }
