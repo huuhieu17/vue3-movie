@@ -1,15 +1,17 @@
 <template>
-  <video-player id="videoPlayer">
+  <video-player id="videoPlayer" class="player-wrapper">
     <video-minimal-skin class="!h-full">
       <video
         ref="videoPlayerRef"
-        class="!h-full w-full"
+        class="!h-full w-full cursor-pointer"
         playsinline
         preload="auto"
         :controls="false"
         :autoplay="props.videoData.playerOptions.autoplay ?? true"
         :muted="props.videoData.playerOptions.muted ?? false"
         :poster="props.videoData.playerOptions.poster"
+        @click="handleVideoClick"
+        @touchend="handleVideoTouchEnd"
         @loadedmetadata="restorePlaybackPosition"
         @timeupdate="persistPlaybackPosition"
         @ended="handleEnded"
@@ -20,6 +22,19 @@
           :type="activeSource.type || 'application/x-mpegURL'"
         />
       </video>
+      <button
+        v-show="!isPlaying || showCenterButton"
+        type="button"
+        class="center-toggle-btn"
+        :aria-label="isPlaying ? 'Pause video' : 'Play video'"
+        @click.stop="togglePlayPause"
+      >
+        <span v-if="!isPlaying" class="play-icon" />
+        <span v-else class="pause-icon" aria-hidden="true">
+          <span />
+          <span />
+        </span>
+      </button>
     </video-minimal-skin>
   </video-player>
 </template>
@@ -65,7 +80,15 @@ const props = defineProps<{
 
 const route = useRoute()
 const storageKey = 'steve-movie'
+const DOUBLE_TAP_DELAY = 280
+const SEEK_SECONDS = 10
+const BUTTON_VISIBLE_MS = 1600
 const videoPlayerRef = ref<HTMLVideoElement | null>(null)
+const isPlaying = ref(false)
+const showCenterButton = ref(false)
+const lastTapAt = ref(0)
+const singleTapTimer = ref<number | null>(null)
+const hideButtonTimer = ref<number | null>(null)
 
 const routeSlug = computed(() => String(route.query.path || route.path.split('/').pop() || 'movie'))
 const episodeSlug = computed(() => String(props.videoData.currentEpisode?.slug || '1'))
@@ -106,7 +129,91 @@ const persistPlaybackPosition = () => {
 }
 
 const handleEnded = () => {
+  isPlaying.value = false
   props.nextEpisodeCallback?.()
+}
+
+const handlePlay = () => {
+  isPlaying.value = true
+  showCenterButton.value = false
+}
+
+const handlePause = () => {
+  isPlaying.value = false
+}
+
+const togglePlayPause = () => {
+  const video = videoPlayerRef.value
+  if (!video) return
+
+  if (video.paused) {
+    void video.play().catch(() => {})
+    return
+  }
+
+  video.pause()
+}
+
+const clearHideButtonTimer = () => {
+  if (hideButtonTimer.value === null) return
+  window.clearTimeout(hideButtonTimer.value)
+  hideButtonTimer.value = null
+}
+
+const revealCenterButton = () => {
+  showCenterButton.value = true
+  clearHideButtonTimer()
+
+  if (!isPlaying.value) return
+
+  hideButtonTimer.value = window.setTimeout(() => {
+    showCenterButton.value = false
+    hideButtonTimer.value = null
+  }, BUTTON_VISIBLE_MS)
+}
+
+const seekBySeconds = (seconds: number) => {
+  const video = videoPlayerRef.value
+  if (!video) return
+
+  const duration = Number.isFinite(video.duration) ? video.duration : Number.MAX_SAFE_INTEGER
+  video.currentTime = Math.min(duration, Math.max(0, video.currentTime + seconds))
+}
+
+const handleVideoClick = () => {
+  // Mobile uses touch logic to detect single-tap vs double-tap.
+  if (isMobileDevice()) return
+  revealCenterButton()
+}
+
+const handleVideoTouchEnd = (event: TouchEvent) => {
+  if (!isMobileDevice()) return
+
+  const video = videoPlayerRef.value
+  const touch = event.changedTouches?.[0]
+  if (!video || !touch) return
+
+  const now = Date.now()
+  const isDoubleTap = now - lastTapAt.value <= DOUBLE_TAP_DELAY
+
+  if (isDoubleTap) {
+    if (singleTapTimer.value !== null) {
+      window.clearTimeout(singleTapTimer.value)
+      singleTapTimer.value = null
+    }
+
+    const rect = video.getBoundingClientRect()
+    const isLeftSide = touch.clientX - rect.left < rect.width / 2
+    seekBySeconds(isLeftSide ? -SEEK_SECONDS : SEEK_SECONDS)
+    lastTapAt.value = 0
+    return
+  }
+
+  lastTapAt.value = now
+  singleTapTimer.value = window.setTimeout(() => {
+    revealCenterButton()
+    singleTapTimer.value = null
+  }, DOUBLE_TAP_DELAY)
 }
 
 const isMobileDevice = () =>
@@ -240,6 +347,9 @@ onMounted(() => {
   const video = videoPlayerRef.value
   if (!video) return
 
+  isPlaying.value = !video.paused
+  video.addEventListener('play', handlePlay)
+  video.addEventListener('pause', handlePause)
   video.addEventListener('webkitbeginfullscreen', handleWebkitBeginFullscreen as EventListener)
   video.addEventListener('webkitendfullscreen', handleWebkitEndFullscreen as EventListener)
 })
@@ -249,12 +359,77 @@ onBeforeUnmount(() => {
   document.removeEventListener('webkitfullscreenchange', handleFullscreenChange as EventListener)
   window.removeEventListener('keydown', handlePlayerHotkeys)
 
+  if (singleTapTimer.value !== null) {
+    window.clearTimeout(singleTapTimer.value)
+    singleTapTimer.value = null
+  }
+
+  clearHideButtonTimer()
+
   const video = videoPlayerRef.value
   if (!video) return
 
+  video.removeEventListener('play', handlePlay)
+  video.removeEventListener('pause', handlePause)
   video.removeEventListener('webkitbeginfullscreen', handleWebkitBeginFullscreen as EventListener)
   video.removeEventListener('webkitendfullscreen', handleWebkitEndFullscreen as EventListener)
 })
 
 
 </script>
+
+<style scoped>
+.player-wrapper {
+  position: relative;
+}
+
+.center-toggle-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 64px;
+  height: 64px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+}
+
+.center-toggle-btn:active {
+  transform: translate(-50%, -50%) scale(0.96);
+}
+
+.play-icon {
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 16px solid #fff;
+  margin-left: 3px;
+}
+
+.pause-icon {
+  display: flex;
+  gap: 6px;
+}
+
+.pause-icon > span {
+  width: 6px;
+  height: 20px;
+  background: #fff;
+  border-radius: 2px;
+}
+
+@media (max-width: 640px) {
+  .center-toggle-btn {
+    width: 56px;
+    height: 56px;
+  }
+}
+</style>
