@@ -122,7 +122,7 @@
           Steve
         </p>
         <div class="flex items-center justify-center space-x-4 text-sm/6 text-gray-500">
-          <p>Đây chỉ là dự án thử nghiệm</p>
+          <p>Đây chỉ là dự án thử nghiệm trong quá trình học tập để làm đẹp CV</p>
         </div>
         <div class="flex items-center justify-center space-x-4 text-sm/6 md:justify-end max-md:text-center">
           <span class="text-gray-500">Liên hệ vấn đề:</span>
