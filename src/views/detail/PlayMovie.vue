@@ -185,7 +185,7 @@ watch(currentEpisode, () => {
 <template>
   <div class="min-h-screen w-full"  v-if="!movieData"></div>
   <div class="pt-16 xl:px-24 px-2 block bg-black" v-if="movieData && playerOptions && currentEpisode">
-    <RouterLink :to="`/chi-tiet/${movieData.item.slug}`">
+    <RouterLink :to="`/chi-tiet/${movieData.item.slug}`" class="focusable">
       <div class="flex items-center space-x-2 text-white">
         <font-awesome-icon class="border rounded-full lg:px-3 lg:py-2 px-2 py-1 font-bold"
           :icon="['fas', 'chevron-left']" />
@@ -205,11 +205,11 @@ watch(currentEpisode, () => {
     <div class="w-full xl:mt-0 mt-5">
       <div class="text-lg italic my-5">Bạn đang xem tập {{ currentEpisode.name }}</div>
       <div>
-        <button class="mr-3 p-3 bg-transparent rounded-2xl text-white border font-bold" @click="playPreviousEpisode">
+        <button class="focusable mr-3 p-3 bg-transparent rounded-2xl text-white border font-bold" @click="playPreviousEpisode">
           <font-awesome-icon :icon="['fas', 'step-backward']" />
           <span class="ml-3">Tập trước</span>
         </button>
-        <button class="p-3 bg-transparent rounded-2xl text-white border font-bold" @click="playNextEpisode">
+        <button class="focusable p-3 bg-transparent rounded-2xl text-white border font-bold" @click="playNextEpisode">
           <font-awesome-icon :icon="['fas', 'step-forward']" />
           <span class="ml-3">Tập tiếp theo</span>
         </button>
@@ -230,7 +230,7 @@ watch(currentEpisode, () => {
           <!-- Thanh cuộn ngang chọn nhóm -->
           <div v-if="currentServer?.server_data?.length > 50" class="group-scroll mb-3">
             <button v-for="group in Math.ceil(currentServer.server_data.length / 50)" :key="group"
-              :class="['group-button', selectedGroup === group ? 'active' : '']" @click="selectedGroup = group">
+              :class="['group-button focusable', selectedGroup === group ? 'active' : '']" @click="selectedGroup = group">
               {{ (group - 1) * 50 + 1 }}–{{ Math.min(group * 50, currentServer.server_data.length) }}
             </button>
           </div>
@@ -240,8 +240,8 @@ watch(currentEpisode, () => {
             <div v-for="(item, index) in currentServer?.server_data.slice(
               (selectedGroup - 1) * 50,
               selectedGroup * 50
-            )" :key="item.name" @click="playEspisode(item.slug)" :ref="(el) => updateRefs(el, index)"
-              class="px-5 py-2 cursor-pointer text-sm episode-item"
+            )" :key="item.name" @click="playEspisode(item.slug)" :ref="(el) => updateRefs(el, +index)"
+              class="px-5 py-2 cursor-pointer text-sm episode-item focusable"
               :class="currentEpisode.slug == item.slug ? 'active' : ''">
               Tập {{ item.name }}
             </div>

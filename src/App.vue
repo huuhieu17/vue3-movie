@@ -4,19 +4,29 @@ import { useHomeDataStore } from '@/stores/base.ts'
 import { darkTheme, NConfigProvider, NLoadingBarProvider } from 'naive-ui'
 import { onMounted } from 'vue'
 import { RouterView } from 'vue-router'
+import SpatialNavigation from 'vue-spatial-nav/lib/spatial_navigation'
 
 onMounted(() => {
   const homeStore = useHomeDataStore();
   homeStore.fetchHomeData();
+  SpatialNavigation.init()
+
+  SpatialNavigation.add({
+    selector: '.focusable',
+  })
+
+  SpatialNavigation.makeFocusable()
+
+  SpatialNavigation.focus()
 })
 </script>
 
 <template>
   <n-config-provider :theme="darkTheme">
     <n-loading-bar-provider>
-        <Layout>
-          <RouterView />
-        </Layout>
+      <Layout>
+        <RouterView />
+      </Layout>
     </n-loading-bar-provider>
 
   </n-config-provider>

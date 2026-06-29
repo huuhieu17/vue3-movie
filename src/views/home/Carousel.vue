@@ -58,7 +58,7 @@ const getVisibleDotIndexes = (total: number, currentIndex: number) => {
     keyboard
     draggable
     effect="fade"
-    class="w-full relative h-full md:min-h-auto lg:min-h-screen min-h-[60vh] carousel-fade"
+    class="focusable w-full relative h-full md:min-h-auto lg:min-h-screen min-h-[60vh] carousel-fade"
     >
     <div v-for="data in listData" :key="data._id"
       class="relative w-full lg:aspect-video min-h-[400px] aspect-[1] bg-cover">
@@ -106,7 +106,8 @@ const getVisibleDotIndexes = (total: number, currentIndex: number) => {
         <li
           v-for="index in getVisibleDotIndexes(total, currentIndex)"
           :key="index"
-          :class="{ ['is-active']: currentIndex === index - 1 }"
+          class="focusable"
+          :class="{ ['is-active']: currentIndex === index - 1}"
           @click="to(index - 1)"
         >
           <img

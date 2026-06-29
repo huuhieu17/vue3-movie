@@ -13,6 +13,7 @@ import { createMemoryHistory, createWebHistory } from 'vue-router';
 import './remote-styles';
 import router from './router';
 import httpClient from './utils/httpClient';
+import vueSpatialNavigation from 'vue-spatial-nav';
 
 // disable auto injection (we load styles.css manually)
 faConfig.autoAddCss = false;
@@ -33,11 +34,29 @@ export function mount(el, props = {} as any) {
 
   router.options.history = history as any;
 
+  const globalConfig = {
+    straightOnly: false,
+    straightOverlapThreshold: 0.5,
+    rememberSource: false,
+    disabled: false,
+    defaultElement: '',
+    enterTo: '',
+    leaveFor: null,
+    restrict: 'self-first',
+    tabIndexIgnoreList: 'a, input, select, textarea, button, iframe, [contentEditable=true]',
+    navigableFilter: null,
+    scrollOptions: {
+      behavior: 'smooth',
+      block: 'center',
+    },
+  };
+
   app = createApp(App, props)
   app.component('FontAwesomeIcon', FontAwesomeIcon)
   app.use(createPinia())
   app.use(router)
   app.use(createMetaManager(true, {}))
+  app.use(vueSpatialNavigation, globalConfig);
   app.mount(el)
   register();
 }

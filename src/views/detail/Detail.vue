@@ -54,7 +54,7 @@ onMounted(() => {
           <div class="xl:w-2/3 w-1/3 overflow-hidden relative rounded-lg">
             <span class="lazy-load-image-background" style="transition-delay: 0.2s">
               <LazyImage
-                className="h-full w-full object-cover transition-transform duration-300 ease-in-out hover:scale-110"
+                className="focusable h-full w-full object-cover transition-transform duration-300 ease-in-out hover:scale-110"
                 :src="`${appConfig.imageUrl}/uploads/movies/${movieData.item.thumb_url}`" :alt="movieData.item.name" />
             </span>
             <div class="absolute left-2 top-2">
@@ -80,15 +80,15 @@ onMounted(() => {
           <div class="flex flex-col lg:space-y-0 space-y-2 lg:flex-row items-center lg:justify-between">
             <div class="flex lg:flex-row flex-col-reverse lg:mt-6 mt-2 lg:justify-between w-full">
               <div>
-                <RouterLink :to="`/play/${movieData.item.slug}`" class="font-bold lg:text-2xl">
-                  <button class="lg:w-content p-3 bg-[#B0E633] rounded-2xl text-black">
+                <RouterLink :to="`/play/${movieData.item.slug}`" class="focusable font-bold lg:text-2xl">
+                  <button class="focusablelg:w-content p-3 bg-[#B0E633] rounded-2xl text-black">
                     <font-awesome-icon :icon="['fas', 'play']" />
                     <span class="ml-3">Xem ngay</span>
                   </button>
                 </RouterLink>
                 <a v-if="movieData.item.trailer_url && movieData.item.trailer_url !== ''"
-                  :href="`${movieData.item.trailer_url}`" class="font-bold lg:text-2xl ml-5">
-                  <button class="lg:w-content p-3 bg-[#e6e61c] rounded-2xl text-black">
+                  :href="`${movieData.item.trailer_url}`" class="focusable font-bold lg:text-2xl ml-5">
+                  <button class="focusablelg:w-content p-3 bg-[#e6e61c] rounded-2xl text-black">
                     <font-awesome-icon :icon="['fas', 'play']" />
                     <span class="ml-3">Trailer</span>
                   </button>
@@ -126,13 +126,13 @@ onMounted(() => {
             <n-tabs class=" w-full" type="card" animated>
               <n-tab-pane class="flex flex-wrap gap-4" :name="'Danh sách tập'" :tab="'Danh sách tập'">
                 <n-tabs class=" w-full" type="line" animated>
-                  <n-tab-pane v-for="(data, index) in movieData.item.episodes" :key="index" :name="data.server_name"
+                  <n-tab-pane  v-for="(data, index) in movieData.item.episodes" :key="index" :name="data.server_name"
                     :tab="data.server_name">
                     <div v-if="data.server_data.length">
                       <!-- Thanh cuộn ngang nhóm -->
                       <div class="group-scroll">
                         <button v-for="group in Math.ceil(data.server_data.length / 50)" :key="group" :class="[
-                          'group-button',
+                          'group-button focusable',
                           selectedGroup[index] === group ? 'active' : ''
                         ]" @click="selectedGroup[index] = group">
                           {{ (group - 1) * 50 + 1 }}–{{ Math.min(group * 50, data.server_data.length) }}
@@ -144,7 +144,7 @@ onMounted(() => {
                         <RouterLink v-for="(_data, _index) in data.server_data.slice(
                           (selectedGroup[index] - 1) * 50,
                           selectedGroup[index] * 50
-                        )" :key="_index" :to="`/play/${movieData.item.slug}?episode=${_data.slug}`" :class="['episode-item', { active: currentEpisode === _data.slug }]">
+                        )" :key="_index" :to="`/play/${movieData.item.slug}?episode=${_data.slug}`" :class="['episode-item focusable', { active: currentEpisode === _data.slug }]">
                           Tập {{ _data.name }}
                         </RouterLink>
                       </div>

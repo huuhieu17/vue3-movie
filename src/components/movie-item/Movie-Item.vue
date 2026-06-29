@@ -4,13 +4,14 @@ import LazyImage from '@/components/Image/Image.vue'
 
 defineProps({
   data: {
-    required: true, // Bắt buộc phải truyền
-  },
+    type: Object,
+    required: true
+  }
 })
 </script>
 <template>
   <RouterLink
-    class="relative overflow-hidden flex flex-col rounded-lg bg-layout shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl max-h-[340px]"
+    class="focusable relative overflow-hidden flex flex-col rounded-lg bg-layout shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl max-h-[340px]"
     :to="'/chi-tiet/'+ data.slug"
   >
     <div class="aspect-[2/3] overflow-hidden">
