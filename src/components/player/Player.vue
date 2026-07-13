@@ -71,6 +71,8 @@ interface VideoData {
 
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { createHtmlSubtitle } from "@huuhieu17/videojs-subtitle/html";
+import "@huuhieu17/videojs-subtitle/style.css";
 
 const props = defineProps<{
   videoData: VideoData,
@@ -324,6 +326,77 @@ const handlePlayerHotkeys = (event: KeyboardEvent) => {
     toggleFullscreen()
   }
 }
+
+const waitForElement = async <T extends Element>(
+  root: ParentNode,
+  selector: string,
+  timeout = 3000
+): Promise<T | null> => {
+  const found = root.querySelector<T>(selector);
+  if (found) return found;
+
+  return new Promise((resolve) => {
+    const timer = window.setTimeout(() => {
+      observer.disconnect();
+      resolve(null);
+    }, timeout);
+
+    const observer = new MutationObserver(() => {
+      const el = root.querySelector<T>(selector);
+      if (el) {
+        window.clearTimeout(timer);
+        observer.disconnect();
+        resolve(el);
+      }
+    });
+
+    observer.observe(root, {
+      childList: true,
+      subtree: true
+    });
+  });
+};
+
+const handleCustomCaption = async () => {
+  await nextTick();
+  await customElements.whenDefined("video-player").catch(() => undefined);
+
+  const video = videoPlayerRef.value;
+  if (!video) return;
+
+  const player = video.closest("video-player") ?? document;
+
+  const mediaContainer =
+    await waitForElement<HTMLElement>(player, "media-container");
+
+  const container =
+    mediaContainer ??
+    video.closest("video-minimal-skin") as HTMLElement | null ??
+    video.parentElement;
+
+  if (!container) return;
+
+  const controlBar =
+    container.querySelector("media-controls") as HTMLElement | null;
+
+  const subtitles = createHtmlSubtitle(container, {
+    container,
+    video,
+    controlBar: controlBar ?? undefined,
+    style: {
+      color: "#ffffff",
+      fontSize: 28,
+      fontFamily: "Arial",
+      background: "rgba(0, 0, 0, 0.55)",
+      position: "bottom",
+      bottom: 76
+    }
+  });
+};
+
+onMounted(() => {
+  handleCustomCaption();
+})
 
 watch(
   () => activeSource.value?.src,
