@@ -43,6 +43,12 @@
 import '@videojs/html/video/player';
 import '@videojs/html/video/minimal-skin';
 
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { createHtmlSubtitle } from "videojs-subtitle/html";
+import "videojs-subtitle/style.css";
+
+
 type ScreenOrientationWithLock = ScreenOrientation & {
   lock?: (orientation: any) => Promise<void>
   unlock?: () => void
@@ -68,11 +74,6 @@ interface VideoData {
   },
   currentEpisode: any
 }
-
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
-import { createHtmlSubtitle } from "@huuhieu17/videojs-subtitle/html";
-import "@huuhieu17/videojs-subtitle/style.css";
 
 const props = defineProps<{
   videoData: VideoData,
@@ -379,7 +380,7 @@ const handleCustomCaption = async () => {
   const controlBar =
     container.querySelector("media-controls") as HTMLElement | null;
 
-  const subtitles = createHtmlSubtitle(container, {
+  createHtmlSubtitle(container, {
     container,
     video,
     controlBar: controlBar ?? undefined,

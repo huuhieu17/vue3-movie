@@ -55,7 +55,7 @@
     </header>
     <SplashScreen v-if="isAppLoading" />
     <div>
-     <n-drawer v-model:show="activeDrawer" placement="left" v-on:hide="activeDrawer  = false" :teleported="false">
+     <n-drawer v-model:show="activeDrawer" placement="left" v-on:update-show="activeDrawer  = false" :teleported="false">
         <n-drawer-content title="">
           <nav class="space-y-6 flex flex-col">
             <RouterLink to="/" @click="activeDrawer = false" class="focusable block text-gray-300 font-bold hover:text-white">
@@ -105,7 +105,7 @@
     </div>
     <!-- Drawer Search -->
     <div>
-      <n-drawer v-model:show="drawerSearch" v-on:hide="drawerSearch = false" :default-width="state.isMobile ? '100%' : '40%'" resizable
+      <n-drawer v-model:show="drawerSearch" v-on:update-show="drawerSearch = false" :default-width="state.isMobile ? '100%' : '40%'" resizable
         :teleported="false">
         <n-drawer-content title="Tìm kiếm" :closable="true" :native-scrollbar="false">
           <Search />
@@ -128,7 +128,6 @@
           <span class="text-gray-500">Liên hệ vấn đề:</span>
           <a href="https://fb.com/huuhieu2001" target="_blank" rel="noopener noreferrer"
             class="text-[#b0e633] hover:text-[#c0f63d] font-semibold transition-colors duration-200 flex items-center space-x-1">
-            <font-awesome-icon :icon="['fab', 'facebook']" />
             <span>fb.com/huuhieu2001</span>
           </a>
         </div>

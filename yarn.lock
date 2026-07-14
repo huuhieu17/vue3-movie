@@ -2902,10 +2902,10 @@ videojs-font@4.2.0:
   resolved "https://registry.npmjs.org/videojs-font/-/videojs-font-4.2.0.tgz"
   integrity sha512-YPq+wiKoGy2/M7ccjmlvwi58z2xsykkkfNMyIg4xb7EZQQNwB71hcSsB3o75CqQV7/y5lXkXhI/rsGAS7jfEmQ==
 
-videojs-subtitle@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.npmjs.org/videojs-subtitle/-/videojs-subtitle-0.0.1.tgz"
-  integrity sha512-C801Rakpx1WFlRURJ76zhFW3PKh0wfG5i66YUhmwXeBZbZA2vVIzzQSm+ZhZygTWETkhECQIpJTXyU+JjR9/eA==
+videojs-subtitle@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.npmjs.org/videojs-subtitle/-/videojs-subtitle-1.0.3.tgz"
+  integrity sha512-UsqrZVpRfabrKO7s6C8VEGGEWBoNDVWYOfvOoY72TXfRo77V184gS2kdlWgsptPRJuVHDe89jPU+RBk0UWligQ==
 
 videojs-vtt.js@0.15.5:
   version "0.15.5"
